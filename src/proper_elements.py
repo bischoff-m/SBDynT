@@ -154,19 +154,34 @@ def calc_proper_elements(
         except:
             not_planets.append(pl)
     # the list of planets in the simulation
-    planets = np.setdiff1d(all_planets, not_planets, assume_unique=True).tolist()
+    planets = np.setdiff1d(
+        all_planets, not_planets, assume_unique=True
+    ).tolist()
 
     # check to see if we can use a default set of pre-computed frequencies
     gp_only = ["jupiter", "saturn", "uranus", "neptune"]
-    no_merc = ["venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"]
+    no_merc = [
+        "venus",
+        "earth",
+        "mars",
+        "jupiter",
+        "saturn",
+        "uranus",
+        "neptune",
+    ]
     freq_file = None
     if planets == gp_only and default_run == True and obj_type == "tno":
-        freq_file = impresources.files(PEdata) / tno_default_giant_planets_frequencies
+        freq_file = (
+            impresources.files(PEdata) / tno_default_giant_planets_frequencies
+        )
     elif planets == gp_only and default_run == True and obj_type == "ast":
-        freq_file = impresources.files(PEdata) / default_giant_planets_frequencies
+        freq_file = (
+            impresources.files(PEdata) / default_giant_planets_frequencies
+        )
     elif planets == no_merc and default_run == True and obj_type == "ast":
         freq_file = (
-            impresources.files(PEdata) / default_all_planets_but_mercury_frequencies
+            impresources.files(PEdata)
+            / default_all_planets_but_mercury_frequencies
         )
     elif planets == all_planets and default_run == True and obj_type == "ast":
         freq_file = impresources.files(PEdata) / default_all_planets_frequencies
@@ -261,8 +276,12 @@ def calc_proper_elements(
 
         # find the peak natural frequencies of the e and i evolution:
         # this returns the indicies of the top-two powered frequencies
-        [gind1, gind2] = np.argpartition(np.abs(Yhk_win[1:]) ** 2.0, -2)[-2:] + 1
-        [sind1, sind2] = np.argpartition(np.abs(Ypq_win[1:]) ** 2.0, -2)[-2:] + 1
+        [gind1, gind2] = (
+            np.argpartition(np.abs(Yhk_win[1:]) ** 2.0, -2)[-2:] + 1
+        )
+        [sind1, sind2] = (
+            np.argpartition(np.abs(Ypq_win[1:]) ** 2.0, -2)[-2:] + 1
+        )
 
         # look at the sums near both frequencies to pick the better one
         summax1hk = np.sum(Yhk_win[gind1 - 3 : gind1 + 4] ** 2.0)
@@ -289,7 +308,10 @@ def calc_proper_elements(
         s2 = freq[sind2]
         try:
             if np.abs(g - planet_freqs.g5) / np.abs(planet_freqs.g5) <= 0.01:
-                if np.abs(g1 - planet_freqs.g5) / np.abs(planet_freqs.g5) > 0.01:
+                if (
+                    np.abs(g1 - planet_freqs.g5) / np.abs(planet_freqs.g5)
+                    > 0.01
+                ):
                     g = g1
                     gind = gind1
                 else:
@@ -300,14 +322,20 @@ def calc_proper_elements(
 
         try:
             if np.abs(g - planet_freqs.g6) / np.abs(planet_freqs.g6) <= 0.01:
-                if np.abs(g1 - planet_freqs.g6) / np.abs(planet_freqs.g6) > 0.01:
+                if (
+                    np.abs(g1 - planet_freqs.g6) / np.abs(planet_freqs.g6)
+                    > 0.01
+                ):
                     g = g1
                     gind = gind1
                 else:
                     g = g2
                     gind = gind2
             if np.abs(s - planet_freqs.s6) / np.abs(planet_freqs.s6) <= 0.01:
-                if np.abs(s1 - planet_freqs.s6) / np.abs(planet_freqs.s6) > 0.01:
+                if (
+                    np.abs(s1 - planet_freqs.s6) / np.abs(planet_freqs.s6)
+                    > 0.01
+                ):
                     s = s1
                     sind = sind1
                 else:
@@ -318,14 +346,20 @@ def calc_proper_elements(
 
         try:
             if np.abs(g - planet_freqs.g7) / np.abs(planet_freqs.g7) <= 0.01:
-                if np.abs(g1 - planet_freqs.g7) / np.abs(planet_freqs.g7) > 0.01:
+                if (
+                    np.abs(g1 - planet_freqs.g7) / np.abs(planet_freqs.g7)
+                    > 0.01
+                ):
                     g = g1
                     gind = gind1
                 else:
                     g = g2
                     gind = gind2
             if np.abs(s - planet_freqs.s7) / np.abs(planet_freqs.s7) <= 0.01:
-                if np.abs(s1 - planet_freqs.s7) / np.abs(planet_freqs.s7) > 0.01:
+                if (
+                    np.abs(s1 - planet_freqs.s7) / np.abs(planet_freqs.s7)
+                    > 0.01
+                ):
                     s = s1
                     sind = sind1
                 else:
@@ -336,14 +370,20 @@ def calc_proper_elements(
 
         try:
             if np.abs(g - planet_freqs.g8) / np.abs(planet_freqs.g8) <= 0.01:
-                if np.abs(g1 - planet_freqs.g8) / np.abs(planet_freqs.g8) > 0.01:
+                if (
+                    np.abs(g1 - planet_freqs.g8) / np.abs(planet_freqs.g8)
+                    > 0.01
+                ):
                     g = g1
                     gind = gind1
                 else:
                     g = g2
                     gind = gind2
             if np.abs(s - planet_freqs.s8) / np.abs(planet_freqs.s8) <= 0.01:
-                if np.abs(s1 - planet_freqs.s8) / np.abs(planet_freqs.s8) > 0.01:
+                if (
+                    np.abs(s1 - planet_freqs.s8) / np.abs(planet_freqs.s8)
+                    > 0.01
+                ):
                     s = s1
                     sind = sind1
                 else:
@@ -355,7 +395,9 @@ def calc_proper_elements(
         elements.g[j] = g
         elements.s[j] = s
 
-        pflag, g_filt_freq, s_filt_freq = calc_filter_frequencies(planet_freqs, g, s)
+        pflag, g_filt_freq, s_filt_freq = calc_filter_frequencies(
+            planet_freqs, g, s
+        )
 
         if j == 0:
             # re-shape elements.filtered_g_frequencies and elements.filtered_s_frequencies
@@ -440,7 +482,10 @@ def calc_proper_elements(
                 # go to the next gi value if we've reached the end of the array, a zero frequency, or switched signs in the frequency array
                 if gi - spreads_g[i] == 0 or freq[gi - spreads_g[i]] == 0:
                     break
-                if gi + spreads_g[i] >= len(freq) or freq[gi + spreads_g[i]] == 0:
+                if (
+                    gi + spreads_g[i] >= len(freq)
+                    or freq[gi + spreads_g[i]] == 0
+                ):
                     break
                 if freq[gi + spreads_g[i]] * freq[gi - spreads_g[i]] < 0:
                     # go back a step
@@ -468,7 +513,10 @@ def calc_proper_elements(
                 # go to the next si value if we've reached the end of the array, a zero frequency, or switched signs in the frequency array
                 if si - spreads_s[i] == 0 or freq[si - spreads_s[i]] == 0:
                     break
-                if si + spreads_s[i] >= len(freq) or freq[si + spreads_s[i]] == 0:
+                if (
+                    si + spreads_s[i] >= len(freq)
+                    or freq[si + spreads_s[i]] == 0
+                ):
                     break
                 if freq[si + spreads_s[i]] * freq[si - spreads_s[i]] < 0:
                     # go back a step
@@ -512,10 +560,14 @@ def calc_proper_elements(
                     tmpY = np.concatenate(
                         (
                             Yhk_f[
-                                gi - 2 * spreads_g[i] - 1 : gi - spreads_g[i] - 1
+                                gi - 2 * spreads_g[i] - 1 : gi
+                                - spreads_g[i]
+                                - 1
                             ].copy(),
                             Yhk_f[
-                                gi + spreads_g[i] + 1 : gi + 2 * spreads_g[i] + 1
+                                gi + spreads_g[i] + 1 : gi
+                                + 2 * spreads_g[i]
+                                + 1
                             ].copy(),
                         )
                     )
@@ -550,10 +602,14 @@ def calc_proper_elements(
                     tmpY = np.concatenate(
                         (
                             Ypq_f[
-                                si - 2 * spreads_s[i] - 1 : si - spreads_s[i] - 1
+                                si - 2 * spreads_s[i] - 1 : si
+                                - spreads_s[i]
+                                - 1
                             ].copy(),
                             Ypq_f[
-                                si + spreads_s[i] + 1 : si + 2 * spreads_s[i] + 1
+                                si + spreads_s[i] + 1 : si
+                                + 2 * spreads_s[i]
+                                + 1
                             ].copy(),
                         )
                     )
@@ -631,7 +687,12 @@ def calc_proper_elements(
 
 # return flag, time, clones, a, p, q, h, k
 def read_sbody_for_proper_elements(
-    des=None, archivefile=None, default_run=True, tmax=None, tmin=None, clones=None
+    des=None,
+    archivefile=None,
+    default_run=True,
+    tmax=None,
+    tmin=None,
+    clones=None,
 ):
     """
     add documentation here...
@@ -676,7 +737,11 @@ def read_sbody_for_proper_elements(
         tmin = 0
         tmax = 0.5e6
         rflag, at, et, inct, nodet, aperit, mat, tt = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+            des=des,
+            archivefile=archivefile,
+            tmax=tmax,
+            tmin=tmin,
+            clones=clones,
         )
         dt = tt[2] - tt[1]
         nout = len(tt)
@@ -691,8 +756,12 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print("warning! proper_elements.calc_proper_elements() was asked to ")
-                print("use clones, but there are no clones in the archive file!")
+                print(
+                    "warning! proper_elements.calc_proper_elements() was asked to "
+                )
+                print(
+                    "use clones, but there are no clones in the archive file!"
+                )
                 print("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
@@ -720,13 +789,21 @@ def read_sbody_for_proper_elements(
         # read rest of the forward integration
         tmin = 0.5001e6
         tmax = 50e6
-        rflag, ap2, ep2, incp2, nodep2, aperip2, mat, tp2 = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+        rflag, ap2, ep2, incp2, nodep2, aperip2, mat, tp2 = (
+            tools.read_sa_for_sbody(
+                des=des,
+                archivefile=archivefile,
+                tmax=tmax,
+                tmin=tmin,
+                clones=clones,
+            )
         )
         dt = tp2[2] - tp2[1]
         nout = len(tp2)
         if dt > 1005.0 or dt < 995.0 or nout < 4.94e4 or nout > 4.96e4:
-            print("unexpected sampling from 0.5-50 Myr of the default TNO integration")
+            print(
+                "unexpected sampling from 0.5-50 Myr of the default TNO integration"
+            )
             print("failed at proper_elements.read_sbody_for_proper_elements()")
             return flag, None, None, None, None, None, None, None, None
 
@@ -741,7 +818,11 @@ def read_sbody_for_proper_elements(
         tmin = -50e6
         tmax = -0.0001e6
         flag, at, et, inct, nodet, aperit, mat, tt = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+            des=des,
+            archivefile=archivefile,
+            tmax=tmax,
+            tmin=tmin,
+            clones=clones,
         )
         if clones == 0:
             at = np.array([at])
@@ -782,7 +863,11 @@ def read_sbody_for_proper_elements(
         tmin = 0.0
         tmax = 5e6
         flag, at, ep, incp, nodep, aperip, mat, tp = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+            des=des,
+            archivefile=archivefile,
+            tmax=tmax,
+            tmin=tmin,
+            clones=clones,
         )
         dt = tp[2] - tp[1]
         nout = len(tp)
@@ -799,8 +884,12 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print("warning! proper_elements.calc_proper_elements() was asked to ")
-                print("use clones, but there are no clones in the archive file!")
+                print(
+                    "warning! proper_elements.calc_proper_elements() was asked to "
+                )
+                print(
+                    "use clones, but there are no clones in the archive file!"
+                )
                 print("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
@@ -829,7 +918,11 @@ def read_sbody_for_proper_elements(
         tmin = -5e6
         tmax = -0.0001e6
         flag, at, et, inct, nodet, aperit, mat, tt = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+            des=des,
+            archivefile=archivefile,
+            tmax=tmax,
+            tmin=tmin,
+            clones=clones,
         )
         dt = np.abs(tt[2] - tt[1])
         nout = len(tt)
@@ -864,7 +957,11 @@ def read_sbody_for_proper_elements(
         lperi = node + aperi
     else:
         flag, at, et, inct, nodet, aperit, mat, tt = tools.read_sa_for_sbody(
-            des=des, archivefile=archivefile, tmax=tmax, tmin=tmin, clones=clones
+            des=des,
+            archivefile=archivefile,
+            tmax=tmax,
+            tmin=tmin,
+            clones=clones,
         )
         # see how many particles and outputs we got back
         if len(at.shape) < 2:
@@ -872,8 +969,12 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print("warning! proper_elements.calc_proper_elements() was asked to ")
-                print("use clones, but there are no clones in the archive file!")
+                print(
+                    "warning! proper_elements.calc_proper_elements() was asked to "
+                )
+                print(
+                    "use clones, but there are no clones in the archive file!"
+                )
                 print("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
@@ -920,7 +1021,9 @@ def read_sbody_for_proper_elements(
     return flag, obj_type, t, clones, a, p, q, h, k
 
 
-def calc_planet_frequencies(archivefile, planets, obj_type=None, tmin=None, tmax=None):
+def calc_planet_frequencies(
+    archivefile, planets, obj_type=None, tmin=None, tmax=None
+):
     """
     add documentation here...
     """
@@ -978,8 +1081,10 @@ def calc_planet_frequencies(archivefile, planets, obj_type=None, tmin=None, tmax
             # read first rest of the forward integration and downsample it
             tmin = 0.5001e6
             tmax = 50e6
-            flag, at, ep2, incp2, nodep2, aperip2, mat, tp2 = tools.read_sa_by_hash(
-                obj_hash=pl, archivefile=archivefile, tmin=tmin, tmax=tmax
+            flag, at, ep2, incp2, nodep2, aperip2, mat, tp2 = (
+                tools.read_sa_by_hash(
+                    obj_hash=pl, archivefile=archivefile, tmin=tmin, tmax=tmax
+                )
             )
             dt = tp2[2] - tp2[1]
             nout = len(tp2)
@@ -1033,7 +1138,9 @@ def calc_planet_frequencies(archivefile, planets, obj_type=None, tmin=None, tmax
             dt = np.abs(tt[2] - tt[1])
             nout = len(tt)
             if dt > 505.0 or dt < 495.0 or nout < 9.9e3 or nout > 1.01e4:
-                print("unexpected sampling in the backwards 5 Myr of the default")
+                print(
+                    "unexpected sampling in the backwards 5 Myr of the default"
+                )
                 print(
                     "asteroid integration. failed at proper_elements.calc_planet_frequencies()"
                 )
@@ -1069,7 +1176,9 @@ def calc_planet_frequencies(archivefile, planets, obj_type=None, tmin=None, tmax
         dt_std = np.std(dt)
         dt_mean = np.mean(dt)
         if dt_std > 0.005 * dt_mean:
-            print("The time series provided is not appropriately evenly sampled")
+            print(
+                "The time series provided is not appropriately evenly sampled"
+            )
             print("the time between outputs must be constant for FFT analysis")
             print("failed at proper_elements.calc_planet_frequencies()")
             return flag, None
@@ -1152,7 +1261,10 @@ def calc_filter_frequencies(planet_freqs, g, s):
     flag = 0
 
     if not (
-        planet_freqs.g5 and planet_freqs.g6 and planet_freqs.g7 and planet_freqs.g8
+        planet_freqs.g5
+        and planet_freqs.g6
+        and planet_freqs.g7
+        and planet_freqs.g8
     ):
         print(
             "current proper elements implementation requires all four giant planets to"

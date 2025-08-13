@@ -266,7 +266,9 @@ def read_sa_for_resonance(
                 tp = sim.particles[tp_hash]
             except:
                 print("resonances.read_sa_for_resonance failed")
-                print("Problem finding a particle with that hash in the archive")
+                print(
+                    "Problem finding a particle with that hash in the archive"
+                )
                 return 0, a, e, inc, node, aperi, ma, phi, t, ""
             o = tp.orbit(com)
             a[j, it] = o.a
@@ -278,7 +280,11 @@ def read_sa_for_resonance(
 
             lamda = o.Omega + o.omega + o.M
             # calculate the resonant angle
-            pt = float(p) * lamda - float(q) * lamda_pl - float(m) * (o.Omega + o.omega)
+            pt = (
+                float(p) * lamda
+                - float(q) * lamda_pl
+                - float(m) * (o.Omega + o.omega)
+            )
             if n != 0 or r != 0 or s != 0:
                 pt = (
                     pt
@@ -423,8 +429,12 @@ def plot_resonance(
         try:
             temp = len(a.shape)
         except:
-            print("You must either pass orbital element arrays (a,e,i, phi and time)")
-            print("or a designation and this planet to this routine to generate plots")
+            print(
+                "You must either pass orbital element arrays (a,e,i, phi and time)"
+            )
+            print(
+                "or a designation and this planet to this routine to generate plots"
+            )
             print("failed at resonances.plot_resonance()")
             return flag, None
     else:
@@ -894,7 +904,9 @@ def nearest_resonance(period_ratio, prtol=0.01):
     # find the nearest, lowest order resonance for an example resonant angle
     flag = 1
     while flag > 0:
-        flag, num, denom, new_q, new_p, n_new = farey_tree(num, denom, prmin, prmax)
+        flag, num, denom, new_q, new_p, n_new = farey_tree(
+            num, denom, prmin, prmax
+        )
         if n_new > 0:
             if period_ratio > 1:
                 pr = int(new_p[0])

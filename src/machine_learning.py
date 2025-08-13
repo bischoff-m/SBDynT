@@ -90,7 +90,9 @@ class TNO_ML_outputs:
             rate[i] = self.clone_classification.count(classes[i])
         mp = np.argmax(rate)
         self.most_common_class = classes[mp]
-        self.fraction_most_common_class = float(rate[mp]) / float(self.clones + 1)
+        self.fraction_most_common_class = float(rate[mp]) / float(
+            self.clones + 1
+        )
         return
 
     def print_results(self):
@@ -468,7 +470,9 @@ class TNO_ML_features:
 
         self.a_minmax_to_mean_density_ratio_short = np.zeros(self.clones + 1)
         self.a_min_to_max_density_ratio_short = np.zeros(self.clones + 1)
-        self.a_delta_minmax_to_mean_density_ratio_short = np.zeros(self.clones + 1)
+        self.a_delta_minmax_to_mean_density_ratio_short = np.zeros(
+            self.clones + 1
+        )
         self.a_delta_min_to_max_density_ratio_short = np.zeros(self.clones + 1)
 
         self.e_minmax_to_mean_density_ratio_short = np.zeros(self.clones + 1)
@@ -771,7 +775,9 @@ def calc_ML_features(
     try:
         adot = (a[:, 1:] - a[:, :-1]) / dt
     except:
-        print("problem in calculating the long simulation time derivatives, probably")
+        print(
+            "problem in calculating the long simulation time derivatives, probably"
+        )
         print("because the same time output is included in the arrays twice")
         return flag, f
     edot = (ec[:, 1:] - ec[:, :-1]) / dt
@@ -856,7 +862,9 @@ def calc_ML_features(
     try:
         adot = (a_short[:, 1:] - a_short[:, :-1]) / dt
     except:
-        print("problem in calculating the long simulation time derivatives, probably")
+        print(
+            "problem in calculating the long simulation time derivatives, probably"
+        )
         print("because the same time output is included in the arrays twice")
         return flag, f
 
@@ -1054,7 +1062,9 @@ def calc_ML_features(
             f.amd_frequency3[n],
         ) = spectral_characteristics(amd, deltat)
 
-        amd = 1.0 - np.sqrt(1.0 - ec_short[n] * ec_short[n]) * np.cos(inc_short[n])
+        amd = 1.0 - np.sqrt(1.0 - ec_short[n] * ec_short[n]) * np.cos(
+            inc_short[n]
+        )
         amd = amd * np.sqrt(a_short[n])
         (
             f.amd_spectral_fraction_short[n],
@@ -1351,7 +1361,9 @@ def run_and_MLclassify_TNO(
         print("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
-    cflag, classifier, tno_class.classes_dictionary = initialize_TNO_classifier()
+    cflag, classifier, tno_class.classes_dictionary = (
+        initialize_TNO_classifier()
+    )
     if cflag < 1:
         print("failed to initialize machine learning classifier")
         print("failed at machine_learning.run_and_MLclassify_TNO()")
@@ -1731,7 +1743,9 @@ def read_TNO_training_data(training_file):
 
     # remove extremely large-a objects and those that scatter a lot in a
     filtered1_TNOs = all_TNOs[all_TNOs["a_mean"] < 1000.0].copy()
-    filtered2_TNOs = filtered1_TNOs[filtered1_TNOs["a_delta_short"] < 30.0].copy()
+    filtered2_TNOs = filtered1_TNOs[
+        filtered1_TNOs["a_delta_short"] < 30.0
+    ].copy()
     filtered_TNOs = filtered2_TNOs[filtered2_TNOs["a_delta"] < 100.0].copy()
 
     filtered_TNOs["simplified_G08"] = filtered_TNOs.apply(
@@ -1787,8 +1801,8 @@ def train_and_test_TNO_classifier(training_file=None):
     classes = dataset[clasfeat].map(types_dict)
 
     rs = 283
-    features_train, features_test, classes_train, classes_test = train_test_split(
-        dataset, classes, test_size=0.333, random_state=rs
+    features_train, features_test, classes_train, classes_test = (
+        train_test_split(dataset, classes, test_size=0.333, random_state=rs)
     )
 
     ids_train = features_train["particle_id"].to_numpy()
@@ -1885,7 +1899,9 @@ def train_TNO_classifier(training_file=None):
     return clf, classes_dict
 
 
-def initialize_TNO_classifier(classifier_file=None, dict_file=None, training_file=None):
+def initialize_TNO_classifier(
+    classifier_file=None, dict_file=None, training_file=None
+):
     """
     read in a pre-trained classifier saved in a pickle file
     if this is the first time the user has used the TNO classifier, it
@@ -1903,14 +1919,18 @@ def initialize_TNO_classifier(classifier_file=None, dict_file=None, training_fil
         classifier_dictionary: dictionary that relates the integer classes
                     provided by classifier to the string classifications
     """
-
+    ################################################################################
     flag = 0
     default = 0
     if classifier_file == None:
-        classifier_file = impresources.files(MLdata) / default_trained_classifier
+        classifier_file = (
+            impresources.files(MLdata) / default_trained_classifier
+        )
         default = 1
     if dict_file == None:
-        dict_file = impresources.files(MLdata) / default_trained_classifier_dictionary
+        dict_file = (
+            impresources.files(MLdata) / default_trained_classifier_dictionary
+        )
 
     if training_file == None:
         training_file = impresources.files(MLdata) / default_TNO_training_data
@@ -1922,7 +1942,9 @@ def initialize_TNO_classifier(classifier_file=None, dict_file=None, training_fil
         print("and save it and the dictionary to:")
         print(classifier_file)
         print(dict_file)
-        print("This will take a moment, but future calls will be much much faster")
+        print(
+            "This will take a moment, but future calls will be much much faster"
+        )
 
         # first do a training and testing run to check the accuracy and make sure the
         # training file features match those expected
@@ -1980,7 +2002,10 @@ def initialize_TNO_classifier(classifier_file=None, dict_file=None, training_fil
             with open(dict_file, "rb") as f:
                 dictionary = load(f)
         except:
-            print("Couldn't read in saved classifier dictionary file %s" % dict_file)
+            print(
+                "Couldn't read in saved classifier dictionary file %s"
+                % dict_file
+            )
             print("try deleting the file and trying again")
             print("failed at machine_learning.initialize_TNO_classifier()")
             return flag, classifier, None
@@ -2009,9 +2034,13 @@ def save_TNO_classifier(
 
     flag = 0
     if classifier_file == None:
-        classifier_file = impresources.files(MLdata) / default_trained_classifier
+        classifier_file = (
+            impresources.files(MLdata) / default_trained_classifier
+        )
     if dict_file == None:
-        dict_file = impresources.files(MLdata) / default_trained_classifier_dictionary
+        dict_file = (
+            impresources.files(MLdata) / default_trained_classifier_dictionary
+        )
 
     if classifier == None:
         print("must specify a classifier to save\n")
@@ -2145,8 +2174,8 @@ def calc_ML_features_from_trainingset_datafiles(short_fname, long_fname):
     requires file names for both a short and long integration
     """
 
-    t, a, e, inc, node, peri, pomega, q, rrf, phirf, tn = read_trainingset_datafiles(
-        long_fname
+    t, a, e, inc, node, peri, pomega, q, rrf, phirf, tn = (
+        read_trainingset_datafiles(long_fname)
     )
     (
         t_short,

@@ -49,7 +49,12 @@ class small_body:
 
 # function to do a standard TNO analysis run using all default choices
 def run_tno(
-    des=None, clones=None, datadir="", archivefile=None, logfile=False, deletefile=False
+    des=None,
+    clones=None,
+    datadir="",
+    archivefile=None,
+    logfile=False,
+    deletefile=False,
 ):
     """
     documentation here...
@@ -69,14 +74,16 @@ def run_tno(
         logmessage = "Initializing a TNO simulation instance by querying JPL"
         writelog(logf, logmessage)
 
-    iflag, sim, epoch, clones, cloning_method, weights = setup_default_tno_integration(
-        des=des,
-        clones=clones,
-        datadir=datadir,
-        save_sbdb=False,
-        saveic=True,
-        archivefile=archivefile,
-        logfile=logfile,
+    iflag, sim, epoch, clones, cloning_method, weights = (
+        setup_default_tno_integration(
+            des=des,
+            clones=clones,
+            datadir=datadir,
+            save_sbdb=False,
+            saveic=True,
+            archivefile=archivefile,
+            logfile=logfile,
+        )
     )
 
     if iflag < 1:
@@ -134,7 +141,9 @@ def run_tno(
         return tno_results
     else:
         if logf:
-            logmessage = "Running additional forward integrations for the synthetic\n"
+            logmessage = (
+                "Running additional forward integrations for the synthetic\n"
+            )
             logmessage += "proper elements calculation\n"
             writelog(logf, logmessage)
 
@@ -152,7 +161,9 @@ def run_tno(
             return tno_results
 
         if logf:
-            logmessage = "Running additional backward integrations for the synthetic\n"
+            logmessage = (
+                "Running additional backward integrations for the synthetic\n"
+            )
             logmessage += "proper elements calculation\n"
             writelog(logf, logmessage)
 

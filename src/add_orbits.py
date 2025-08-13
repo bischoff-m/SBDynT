@@ -70,7 +70,9 @@ def initialize_from_heliocentric_Find_Orb_orbit(
         clones = ntp_avail - 1
     elif clones > ntp_avail - 1:
         print("add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed")
-        print("the number of clones specified is more than than the length of orbital")
+        print(
+            "the number of clones specified is more than than the length of orbital"
+        )
         print("element arrays that were provided.")
         return 0, sim
 
@@ -165,7 +167,9 @@ def initialize_from_heliocentric_Find_Orb_orbit(
         sim.save_to_file(ic_file)
         if logfile:
             logmessage = (
-                "Rebound simulation initial conditions saved to " + ic_file + "\n"
+                "Rebound simulation initial conditions saved to "
+                + ic_file
+                + "\n"
             )
             tools.writelog(logfile, logmessage)
 

@@ -100,7 +100,17 @@ def add_planets(sim, planets=["all"], epoch=2459580.5):
     msun = msun / const.SS_GM[0]
     # sun's radius in au
     radius = const.SS_r[0]
-    sim.add(m=msun, r=radius, x=0.0, y=0.0, z=0.0, vx=0.0, vy=0.0, vz=0.0, hash="sun")
+    sim.add(
+        m=msun,
+        r=radius,
+        x=0.0,
+        y=0.0,
+        z=0.0,
+        vx=0.0,
+        vy=0.0,
+        vz=0.0,
+        hash="sun",
+    )
 
     # set the initial correction for the included planets'
     # position and velocities to zero
@@ -279,7 +289,9 @@ def initialize_simulation(
         )
     )
     if sflag < 1:
-        print("run_reb.initialize_simulation failed at horizons_api.query_sb_from_jpl")
+        print(
+            "run_reb.initialize_simulation failed at horizons_api.query_sb_from_jpl"
+        )
         return flag, 0.0, sim
 
     if logfile:
@@ -328,7 +340,9 @@ def initialize_simulation(
         sbvy += svy
         sbvz += svz
         sbhash = des
-        sim.add(m=0.0, x=sbx, y=sby, z=sbz, vx=sbvx, vy=sbvy, vz=sbvz, hash=sbhash)
+        sim.add(
+            m=0.0, x=sbx, y=sby, z=sbz, vx=sbvx, vy=sbvy, vz=sbvz, hash=sbhash
+        )
 
     sim.move_to_com()
 
@@ -342,7 +356,9 @@ def initialize_simulation(
         sim.save_to_file(ic_file)
         if logfile:
             logmessage = (
-                "Rebound simulation initial conditions saved to " + ic_file + "\n"
+                "Rebound simulation initial conditions saved to "
+                + ic_file
+                + "\n"
             )
             tools.writelog(logfile, logmessage)
     flag = 1
@@ -354,7 +370,12 @@ def initialize_simulation(
 
 
 def initialize_simulation_at_epoch(
-    planets=["all"], des=None, epoch=2459580.5, datadir="", saveic=False, logfile=False
+    planets=["all"],
+    des=None,
+    epoch=2459580.5,
+    datadir="",
+    saveic=False,
+    logfile=False,
 ):
     """
     inputs:
@@ -448,7 +469,9 @@ def initialize_simulation_at_epoch(
         sim, planets=planets, epoch=epoch
     )
     if apflag < 1:
-        print("run_reb.initialize_simulation_at_epoch failed at run_reb.add_planets")
+        print(
+            "run_reb.initialize_simulation_at_epoch failed at run_reb.add_planets"
+        )
         return flag, 0.0, sim
 
     for i in range(0, ntp):
@@ -483,7 +506,9 @@ def initialize_simulation_at_epoch(
         sim.save_to_file(ic_file)
         if logfile:
             logmessage = (
-                "Rebound simulation initial conditions saved to " + ic_file + "\n"
+                "Rebound simulation initial conditions saved to "
+                + ic_file
+                + "\n"
             )
             tools.writelog(logfile, logmessage)
 
@@ -538,7 +563,9 @@ def run_simulation(
     flag = 0
     if archivefile == None:
         if des == None:
-            print("You must provide either an archivefile name or a designation ")
+            print(
+                "You must provide either an archivefile name or a designation "
+            )
             print("that can be used to generate a default archivefile name")
             print("failed at run_reb.run_simulation")
             return flag, sim
@@ -549,8 +576,12 @@ def run_simulation(
 
     if logfile == True:
         if des == None:
-            print("You must provide either a logfile name (or logfile='screen') or ")
-            print("a designation that can be used to generate a default logfile name")
+            print(
+                "You must provide either a logfile name (or logfile='screen') or "
+            )
+            print(
+                "a designation that can be used to generate a default logfile name"
+            )
             print("failed at run_reb.run_simulation")
             return flag, sim
         logfile = tools.log_file_name(des=des)
@@ -580,10 +611,20 @@ def run_simulation(
     sim.save_to_file(archivefile, interval=tout, delete_file=deletefile)
     if logfile:
         logmessage = (
-            "Running " + des + " from " + str(tmin) + " to " + str(tmax) + " years \n"
+            "Running "
+            + des
+            + " from "
+            + str(tmin)
+            + " to "
+            + str(tmax)
+            + " years \n"
         )
         logmessage += (
-            "using " + integrator + " outputting every " + str(tout) + " years \n"
+            "using "
+            + integrator
+            + " outputting every "
+            + str(tout)
+            + " years \n"
         )
         logmessage += "to simulation archivefile " + archivefile + "\n"
         now = datetime.now()
@@ -659,7 +700,9 @@ def initialize_simulation_from_simarchive(
                 sim = rebound.Simulation(archivefile2)
             except RuntimeError:
                 print("run_reb.initialize_simulation_from_simarchive failed")
-                print("couldn't read the simulation archive file from either default: ")
+                print(
+                    "couldn't read the simulation archive file from either default: "
+                )
                 print(archivefile)
                 print(archivefile2)
                 return flag, None, 0
@@ -703,7 +746,9 @@ def initialize_simulation_from_simarchive(
                 nfound += -1
         if nfound == 0:
             print("run_reb.initialize_simulation_from_simarchive failed")
-            print("couldn't find any of the small bodies in the simulation from: ")
+            print(
+                "couldn't find any of the small bodies in the simulation from: "
+            )
             print(archivefile)
             if logfile:
                 logmessage += (
@@ -730,7 +775,9 @@ def initialize_simulation_from_simarchive(
         except:
             print("failed to find the best-fit in the simulation")
             logmessage += (
-                "Failed to find best-fit of " + str(des) + " in the simulation\n"
+                "Failed to find best-fit of "
+                + str(des)
+                + " in the simulation\n"
             )
             nfound += -1
         for i in range(1, ntp):
@@ -740,7 +787,9 @@ def initialize_simulation_from_simarchive(
                 p = sim.particles[sbhash]
             except:
                 print("missing clone %d from the simulation" % j)
-                logmessage += "missing clone " + str(j) + "from the simulation\n"
+                logmessage += (
+                    "missing clone " + str(j) + "from the simulation\n"
+                )
                 n_found += -1
 
     if nfound == 0:
@@ -748,7 +797,9 @@ def initialize_simulation_from_simarchive(
         print("couldn't find any of the small bodies in the simulation from: ")
         print(archivefile)
         if logfile:
-            logmessage += "couldn't find any of the small bodies in the simulation\n"
+            logmessage += (
+                "couldn't find any of the small bodies in the simulation\n"
+            )
             tools.writelog(logfile, logmessage)
         return flag, None, 0
     elif nfound < ntp:
@@ -761,7 +812,11 @@ def initialize_simulation_from_simarchive(
     # everything went as expected
     flag = 1
     logmessage += (
-        "Found " + str(des) + " and " + str(clones) + " clones in the simulation\n"
+        "Found "
+        + str(des)
+        + " and "
+        + str(clones)
+        + " clones in the simulation\n"
     )
     if logfile:
         tools.writelog(logfile, logmessage)

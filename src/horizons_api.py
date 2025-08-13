@@ -192,7 +192,10 @@ def query_sb_from_jpl(
     else:
         find_3_sigma = False
 
-    if not cloning_method == "find_3_sigma" and not cloning_method == "Gaussian":
+    if (
+        not cloning_method == "find_3_sigma"
+        and not cloning_method == "Gaussian"
+    ):
         print("unsupported cloning method!")
         print("Right now only 'Gaussian' and 'find_3_sigma' are implemented")
         print("horizons_api.query_sb_from_jpl failed")
@@ -235,7 +238,9 @@ def query_sb_from_jpl(
         try:
             # query the JPL small body database browser for the best-fit
             # orbit and associated covariance matrix
-            obj = SBDB.query(des, full_precision=True, covariance="mat", phys=True)
+            obj = SBDB.query(
+                des, full_precision=True, covariance="mat", phys=True
+            )
         except:
             print("horizons_api.query_sb_from_jpl failed")
             print(
@@ -249,11 +254,15 @@ def query_sb_from_jpl(
     # query won't return the most up-to-date orbit (even though the darned system knows
     # the provisional designation corresponds to the numbered object...grr
 
-    sbdbpdes, sbdbdestype = tools.mpc_designation_translation(obj["object"]["des"])
+    sbdbpdes, sbdbdestype = tools.mpc_designation_translation(
+        obj["object"]["des"]
+    )
     if sbdbdestype != destype:
         try:
             newdes = obj["object"]["des"]
-            obj = SBDB.query(newdes, full_precision=True, covariance="mat", phys=True)
+            obj = SBDB.query(
+                newdes, full_precision=True, covariance="mat", phys=True
+            )
         except:
             print("horizons_api.query_sb_from_jpl failed")
             print(
@@ -413,7 +422,9 @@ def query_sb_from_jpl(
         )
     else:
         url += "&OUT_UNITS='AU-D'&COMMAND='"
-        url += pdes + "%3B'&START_TIME=" + start_time + "&STOP_TIME=" + stop_time
+        url += (
+            pdes + "%3B'&START_TIME=" + start_time + "&STOP_TIME=" + stop_time
+        )
 
     # run the query and exit if it fails
     response = requests.get(url)
@@ -462,9 +473,9 @@ def query_sb_from_jpl(
         if find_3_sigma:
             # sample the covariance matrix 6000 times, sort by semimajor
             # axis and pull the top and bottom ~0.1% as 3-sigma values
-            tecc, tq, ttp, tnode, targperi, tinc = np.random.multivariate_normal(
-                mean, covmat, 6000
-            ).T
+            tecc, tq, ttp, tnode, targperi, tinc = (
+                np.random.multivariate_normal(mean, covmat, 6000).T
+            )
             tempa = tq / (1.0 - tecc)
             sorted_a_index = np.argsort(tempa)
             # check to make sure the 3-sigma orbits are e=0-1
@@ -495,9 +506,9 @@ def query_sb_from_jpl(
 
             if clones > 2:
                 # sample the rest of the clones
-                tecc, tq, ttp, tnode, targperi, tinc = np.random.multivariate_normal(
-                    mean, covmat, clones
-                ).T
+                tecc, tq, ttp, tnode, targperi, tinc = (
+                    np.random.multivariate_normal(mean, covmat, clones).T
+                )
                 tecc[0:2] = ecc[0:2]
                 tq[0:2] = q[0:2]
                 ttp[0:2] = tp[0:2]
@@ -638,7 +649,9 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
         )
         if destype == "provisional":
             url += "&OUT_UNITS='AU-D'&COMMAND='DES="
-            url += pdes + "'&START_TIME=" + start_time + "&STOP_TIME=" + stop_time
+            url += (
+                pdes + "'&START_TIME=" + start_time + "&STOP_TIME=" + stop_time
+            )
         elif destype == "other":
             url += "&OUT_UNITS='AU-D'&COMMAND='DES="
             url += (
@@ -650,7 +663,13 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
             )
         else:
             url += "&OUT_UNITS='AU-D'&COMMAND='"
-            url += pdes + "%3B'&START_TIME=" + start_time + "&STOP_TIME=" + stop_time
+            url += (
+                pdes
+                + "%3B'&START_TIME="
+                + start_time
+                + "&STOP_TIME="
+                + stop_time
+            )
 
         # run the query and exit if it fails
         response = requests.get(url)
@@ -680,7 +699,8 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
         except:
             print("horizons_api.query_sb_from_horizons failed")
             print(
-                'Unable to find "X =" in Horizons API request result for %s:' % (des[n])
+                'Unable to find "X =" in Horizons API request result for %s:'
+                % (des[n])
             )
             print(data["result"])
             return flag, x, y, z, vx, vy, vz

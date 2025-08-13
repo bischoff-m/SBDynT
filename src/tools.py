@@ -465,7 +465,12 @@ def mpc_designation_translation(obj):
 # element arrays by hash
 #################################################################
 def read_sa_by_hash(
-    obj_hash=None, archivefile=None, datadir="", tmin=None, tmax=None, center="bary"
+    obj_hash=None,
+    archivefile=None,
+    datadir="",
+    tmin=None,
+    tmax=None,
+    center="bary",
 ):
     """
     Reads the simulation archive file produced by the run_reb
@@ -817,7 +822,9 @@ def read_sa_for_sbody(
                 p = sim.particles[tp_hash]
             except:
                 print("tools.read_sa_for_sbody failed")
-                print("Problem finding a particle with that hash in the archive")
+                print(
+                    "Problem finding a particle with that hash in the archive"
+                )
                 return 0, a, e, inc, node, aperi, ma, t
             o = p.orbit(com)
 
@@ -852,7 +859,16 @@ def read_sa_for_sbody(
         ma = ma[:, 0:it]
 
     if clones == 0:
-        return 1, a[0, :], e[0, :], inc[0, :], node[0, :], aperi[0, :], ma[0, :], t
+        return (
+            1,
+            a[0, :],
+            e[0, :],
+            inc[0, :],
+            node[0, :],
+            aperi[0, :],
+            ma[0, :],
+            t,
+        )
     else:
         return 1, a, e, inc, node, aperi, ma, t
 
@@ -1014,7 +1030,9 @@ def read_sa_for_sbody_cartesian(
                 p = sim.particles[tp_hash]
             except:
                 print("tools.read_sa_for_sbody_cartesian failed")
-                print("Problem finding a particle with that hash in the archive")
+                print(
+                    "Problem finding a particle with that hash in the archive"
+                )
                 return 0, x, y, z, vx, vy, vz, t
 
             x[j, it] = p.x - dx
@@ -1062,7 +1080,12 @@ def read_sa_for_sbody_cartesian(
 # position arrays for a small body
 #################################################################
 def read_sa_by_hash_cartesian(
-    obj_hash=None, archivefile=None, datadir="", center="bary", tmin=None, tmax=None
+    obj_hash=None,
+    archivefile=None,
+    datadir="",
+    center="bary",
+    tmin=None,
+    tmax=None,
 ):
     """
     Reads the simulation archive file produced by the run_reb
@@ -1533,4 +1556,13 @@ def calc_rotating_frame(
     if ntp > 1:
         return 1, xr, yr, zr, vxr, vyr, vzr, t
     else:
-        return 1, xr[0, :], yr[0, :], zr[0, :], vxr[0, :], vyr[0, :], vzr[0, :], t
+        return (
+            1,
+            xr[0, :],
+            yr[0, :],
+            zr[0, :],
+            vxr[0, :],
+            vyr[0, :],
+            vzr[0, :],
+            t,
+        )

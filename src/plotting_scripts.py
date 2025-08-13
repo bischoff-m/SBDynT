@@ -62,7 +62,9 @@ def plot_aei(
         try:
             temp = len(a.shape)
         except:
-            print("You must either pass orbital element arrays (a,e,i and time)")
+            print(
+                "You must either pass orbital element arrays (a,e,i and time)"
+            )
             print("or a designation to this routine to generate plots")
             print("failed at plotting_scripts.plot_aei()")
             return flag, None
@@ -80,7 +82,9 @@ def plot_aei(
                 clones=clones,
             )
             if rflag < 1:
-                print("Could not generate arrays (a,e,i and time) for the provided")
+                print(
+                    "Could not generate arrays (a,e,i and time) for the provided"
+                )
                 print("designation and/or archivefile")
                 print("failed at plotting_scripts.plot_aei()")
                 return flag, None

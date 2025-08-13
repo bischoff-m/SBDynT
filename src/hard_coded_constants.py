@@ -28,50 +28,50 @@ SS_GM[8] = 6836527.10058  # Neptune system
 
 # array of physical radius values queried January 2022
 # (again, not possible to pull directly via API)
-kmtoau = (1000./149597870700.)  # 1000m/(jpl's au in m) = 6.68459e-9
+kmtoau = 1000.0 / 149597870700.0  # 1000m/(jpl's au in m) = 6.68459e-9
 SS_r = np.zeros(9)
-SS_r[0] = 695700.*kmtoau  # Sun
-SS_r[1] = 2440.53*kmtoau  # Mercury
-SS_r[2] = 6051.8*kmtoau  # Venus
-SS_r[3] = 6378.136*kmtoau  # Earth
-SS_r[4] = 3396.19*kmtoau  # Mars
-SS_r[5] = 71492.*kmtoau  # Jupiter system
-SS_r[6] = 60268.*kmtoau  # Saturn system
-SS_r[7] = 25559.*kmtoau  # Uranus system
-SS_r[8] = 24764.*kmtoau  # Neptune system
+SS_r[0] = 695700.0 * kmtoau  # Sun
+SS_r[1] = 2440.53 * kmtoau  # Mercury
+SS_r[2] = 6051.8 * kmtoau  # Venus
+SS_r[3] = 6378.136 * kmtoau  # Earth
+SS_r[4] = 3396.19 * kmtoau  # Mars
+SS_r[5] = 71492.0 * kmtoau  # Jupiter system
+SS_r[6] = 60268.0 * kmtoau  # Saturn system
+SS_r[7] = 25559.0 * kmtoau  # Uranus system
+SS_r[8] = 24764.0 * kmtoau  # Neptune system
 
 
 # constants needed for accepting orbit fits from non-JPL sources
 #
 # Find_Orb sun GM as of Nov. 15, 2023 (km^3 s^-2)
-find_orb_sunGM = 1.3271243994E+11
-stoyear = 1./(365.25*24.*60.*60.)
+find_orb_sunGM = 1.3271243994e11
+stoyear = 1.0 / (365.25 * 24.0 * 60.0 * 60.0)
 
 
-#constants used for the proper elements calculations
+# constants used for the proper elements calculations
 #
-# frequencies associated with the secular modes of the 
+# frequencies associated with the secular modes of the
 # solar system, converted from "/yr to cycles/yr
-conv = 1296000.
+conv = 1296000.0
 # g1s1 -> g4s4 taken from Murray and Dermott SSD Table 7.1
-g1 = 5.46326/conv
-s1 = -5.20154/conv
-g2 = 7.34474/conv
-s2 = -6.57080/conv
-g3 = 17.32832/conv
-s3 = -18.74359/conv
-g4 = 18.00233/conv
-s4 = -17.63331/conv
+g1 = 5.46326 / conv
+s1 = -5.20154 / conv
+g2 = 7.34474 / conv
+s2 = -6.57080 / conv
+g3 = 17.32832 / conv
+s3 = -18.74359 / conv
+g4 = 18.00233 / conv
+s4 = -17.63331 / conv
 
 
 # g5s6 -> g8s8 taken from Knezevic et al 1991
-g5 = 4.25749319/conv
-g6 = 28.24552984/conv
-g7 = 3.08675577/conv
-g8 = 0.67255084/conv
-s6 = -26.34496354/conv
-s7 = -2.99266093/conv
-s8 = -0.69251386/conv
-#the two extra terms from M&D for higher-order secular theory
-g9 = 2.*g5 - g6
-g10 = 2.*g6 - g5
+g5 = 4.25749319 / conv
+g6 = 28.24552984 / conv
+g7 = 3.08675577 / conv
+g8 = 0.67255084 / conv
+s6 = -26.34496354 / conv
+s7 = -2.99266093 / conv
+s8 = -0.69251386 / conv
+# the two extra terms from M&D for higher-order secular theory
+g9 = 2.0 * g5 - g6
+g10 = 2.0 * g6 - g5

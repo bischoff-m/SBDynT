@@ -1,6 +1,6 @@
 # type: ignore
 
-from src.machine_learning import run_and_MLclassify_TNO
+from sbdynt.machine_learning import run_and_MLclassify_TNO
 from pycallgraph import PyCallGraph
 from pycallgraph import Config
 from pycallgraph import GlobbingFilter
@@ -10,7 +10,7 @@ from pycallgraph.output import GraphvizOutput
 config = Config()
 config.trace_filter = GlobbingFilter(
     include=[
-        "src.*",
+        "sbdynt.*",
     ]
 )
 

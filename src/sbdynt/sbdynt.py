@@ -1,13 +1,13 @@
-from src.horizons_api import *
-from src.tools import *
-from src.resonances import *
-from src.run_reb import *
-from src.plotting_scripts import *
-from src.hard_coded_constants import *
-from src.add_orbits import *
-from src.machine_learning import *
-from src.proper_elements import *
-from src.tno import *
+from sbdynt.horizons_api import *
+from sbdynt.tools import *
+from sbdynt.resonances import *
+from sbdynt.run_reb import *
+from sbdynt.plotting_scripts import *
+from sbdynt.hard_coded_constants import *
+from sbdynt.add_orbits import *
+from sbdynt.machine_learning import *
+from sbdynt.proper_elements import *
+from sbdynt.tno import *
 
 import rebound
 

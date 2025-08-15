@@ -2,8 +2,8 @@ import rebound
 import numpy as np
 
 # local
-from src import horizons_api
-from src import tools
+from sbdynt import horizons_api
+from sbdynt import tools
 from datetime import datetime
 
 
@@ -81,7 +81,7 @@ def add_planets(sim, planets=["all"], epoch=2459580.5):
     # SS_r[0:9] all in au
     # reasonable integration timesteps for each planet:
     # dt[0:9]
-    from src import hard_coded_constants as const
+    from sbdynt import hard_coded_constants as const
 
     sim.dt = const.dt[0]
 

@@ -1,5 +1,5 @@
-from src import tools
-from src import run_reb
+from sbdynt import tools
+from sbdynt import run_reb
 import numpy as np
 
 

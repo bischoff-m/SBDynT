@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # local
-from src import tools
+from sbdynt import tools
 
 
 #################################################################

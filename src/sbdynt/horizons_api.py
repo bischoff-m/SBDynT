@@ -8,7 +8,7 @@ from pickle import dump
 
 
 # internal modules
-from src import tools
+from sbdynt import tools
 
 
 def query_horizons_planets(obj=None, epoch=2459580.5):
@@ -67,7 +67,7 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     # Planet physical parameters
     # SS_GM[0:9] in km^3 s^–2
     # SS_r[0:9] all in au
-    from src import hard_coded_constants as const
+    from sbdynt import hard_coded_constants as const
 
     # calculate planet masses in solar masses
     mass = const.SS_GM[planet_id[obj]] / const.SS_GM[planet_id["sun"]]

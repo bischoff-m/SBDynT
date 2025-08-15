@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from src import tools
+from sbdynt import tools
 
 
 def plot_aei(

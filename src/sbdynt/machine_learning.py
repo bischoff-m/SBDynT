@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-from src import tools
-from src import run_reb
-from src import MLdata
-from src import tno
+from sbdynt import tools
+from sbdynt import run_reb
+from sbdynt import MLdata
+from sbdynt import tno
 
 from os import path
 from sklearn.metrics import accuracy_score

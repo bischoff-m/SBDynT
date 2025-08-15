@@ -2,8 +2,8 @@ import numpy as np
 import rebound
 
 # internal modules
-import tools
-import run_reb
+from src import tools
+from src import run_reb
 
 
 def initialize_from_heliocentric_Find_Orb_orbit(
@@ -99,7 +99,7 @@ def initialize_from_heliocentric_Find_Orb_orbit(
     # find_orb_sunGM
     # and some unit conversions to get to units of au, yr, and msun
 
-    import hard_coded_constants as const
+    from src import hard_coded_constants as const
 
     # set up the rebound simulation, adding the planets first
     # add the planets and return the position/velocity corrections for

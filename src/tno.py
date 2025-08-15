@@ -1,5 +1,5 @@
-import tools
-import run_reb
+from src import tools
+from src import run_reb
 import numpy as np
 
 
@@ -14,19 +14,19 @@ def setup_default_tno_integration(
 ):
     """ """
     flag = 0
-    if des == None:
+    if des is None:
         print("The designation of a TNO must be provided")
         print("failed at tno.setup_default_tno_integration()")
         return flag, None, None, None, None, None
 
-    if logfile == True:
+    if logfile:
         logf = tools.log_file_name(des=des)
     else:
         logf = logfile
     if datadir and logf and logf != "screen":
         logf = datadir + "/" + logf
 
-    if clones == None:
+    if clones is None:
         # default to the Gladman approach of best fit + 3-sigma clones
         clones = 2
         cloning_method = "find_3_sigma"

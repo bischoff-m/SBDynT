@@ -8,7 +8,7 @@ from pickle import dump
 
 
 # internal modules
-import tools
+from src import tools
 
 
 def query_horizons_planets(obj=None, epoch=2459580.5):
@@ -32,7 +32,7 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
 
     flag = 0
 
-    if obj == None:
+    if obj is None:
         print("A planet name must be provided")
         print("horizons_api.query_horizons_planets failed")
         return flag, 0.0, 0.0, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
@@ -67,7 +67,7 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     # Planet physical parameters
     # SS_GM[0:9] in km^3 s^–2
     # SS_r[0:9] all in au
-    import hard_coded_constants as const
+    from src import hard_coded_constants as const
 
     # calculate planet masses in solar masses
     mass = const.SS_GM[planet_id[obj]] / const.SS_GM[planet_id["sun"]]

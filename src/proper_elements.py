@@ -3,8 +3,8 @@ import numpy as np
 from scipy import signal
 
 # local
-import PEdata
-import tools
+from src import PEdata
+from src import tools
 from pickle import dump
 from pickle import load
 from importlib import resources as impresources

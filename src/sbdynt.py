@@ -1,13 +1,13 @@
-from horizons_api import *
-from tools import *
-from resonances import *
-from run_reb import *
-from plotting_scripts import *
-from hard_coded_constants import *
-from add_orbits import *
-from machine_learning import *
-from proper_elements import *
-from tno import *
+from src.horizons_api import *
+from src.tools import *
+from src.resonances import *
+from src.run_reb import *
+from src.plotting_scripts import *
+from src.hard_coded_constants import *
+from src.add_orbits import *
+from src.machine_learning import *
+from src.proper_elements import *
+from src.tno import *
 
 import rebound
 

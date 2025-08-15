@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-import tools
-import run_reb
-import MLdata
-import tno
+from src import tools
+from src import run_reb
+from src import MLdata
+from src import tno
 
 from os import path
 from sklearn.metrics import accuracy_score
@@ -1172,12 +1172,12 @@ def run_and_MLclassify_TNO(
     """
     flag = 0
 
-    if des == None:
+    if des is None:
         print("The designation of the small body must be provided")
         print("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
-    if sim == None:
+    if sim is None:
         # initialize a default simulation
         iflag, sim, epoch, clones, cloning_method, weights = (
             tno.setup_default_tno_integration(
@@ -1195,7 +1195,7 @@ def run_and_MLclassify_TNO(
             print("failed at machine_learning.run_and_MLclassify_TNO()")
             return flag, None, sim
 
-    if logfile == True:
+    if logfile:
         logf = tools.log_file_name(des=des)
     else:
         logf = logfile
@@ -1203,10 +1203,8 @@ def run_and_MLclassify_TNO(
         logf = datadir + "/" + logf
 
     flag = 0
-    # make an empty set of classification outputs
-    tno_class = TNO_ML_outputs(clones)
 
-    if archivefile == None:
+    if archivefile is None:
         archivefile = tools.archive_file_name(des=des)
     if datadir:
         archivefile = datadir + "/" + archivefile
@@ -1219,7 +1217,7 @@ def run_and_MLclassify_TNO(
         sim,
         des=des,
         tmax=tmax,
-        tout=50.0,
+        tout=50,
         archivefile=archivefile,
         deletefile=deletefile,
         logfile=logfile,
@@ -1279,7 +1277,7 @@ def run_and_MLclassify_TNO(
         sim,
         des=des,
         tmax=tmax,
-        tout=1000.0,
+        tout=1000,
         archivefile=archivefile,
         deletefile=False,
         logfile=logfile,
@@ -1330,6 +1328,9 @@ def run_and_MLclassify_TNO(
     rrf_long = np.concatenate((rrf_short[:, ::20], rrf), axis=1)
     phirf_long = np.concatenate((phirf_short[:, ::20], phirf), axis=1)
     tiss_long = np.concatenate((tiss_short[:, ::20], tiss), axis=1)
+
+    # make an empty set of classification outputs
+    tno_class = TNO_ML_outputs(clones)
 
     fflag, tno_class.features = calc_ML_features(
         t_long,

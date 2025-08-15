@@ -709,6 +709,12 @@ wheels = [
 ]
 
 [[package]]
+name = "python-call-graph"
+version = "2.1.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b4/b6/de26edf42bf7b6d6c309c623abbc4f8b0b0a4ab7af8b70c75c79d0e5583e/python-call-graph-2.1.4.tar.gz", hash = "sha256:e97cbff31e0759d419fac9b42501625b075bdf43b7ff8209223c0034d27abbf1", size = 471270 }
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -811,7 +817,7 @@ wheels = [
 [[package]]
 name = "sbdynt"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "astroquery" },
     { name = "matplotlib" },
@@ -820,6 +826,11 @@ dependencies = [
     { name = "rebound" },
     { name = "scikit-learn" },
     { name = "scipy" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "python-call-graph" },
 ]
 
 [package.metadata]
@@ -832,6 +843,9 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.7.1" },
     { name = "scipy", specifier = ">=1.16.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "python-call-graph", specifier = ">=2.1.4" }]
 
 [[package]]
 name = "scikit-learn"

@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from typing import Literal
 
 import numpy as np
 import rebound
@@ -59,7 +60,7 @@ def ic_file_name(des=None):
     return icfile
 
 
-def log_file_name(des=None):
+def log_file_name(des: list[str] | str | None = None):
     """
     if the user doesn't provide a log filename
     this function will be used to make the default
@@ -69,8 +70,8 @@ def log_file_name(des=None):
         icfile, string: filename for the log file
     """
 
-    if des == None:
-        logfile = "log.txt"
+    if des is None:
+        des = "log.txt"
 
     # for the default file names, use the first designation
     # if this is a list of objects instead of just one
@@ -85,13 +86,15 @@ def log_file_name(des=None):
     return logfile
 
 
-def writelog(logfile, logmessage):
+def writelog(logfile: str | Literal["screen"] | None, logmessage: str):
     """
     append to the log file
     inputs:
         logfile, bool or string
         logmessage, string
     """
+    if logfile is None:
+        return
     if logfile == "screen":
         print(logmessage)
     else:

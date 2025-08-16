@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 from rebound import Simulation
 
@@ -10,8 +12,7 @@ def setup_default_tno_integration(
     datadir="",
     save_sbdb=False,
     saveic=False,
-    archivefile=None,
-    logfile=False,
+    logfile: bool | Literal["screen"] = False,
 ) -> tuple[
     int,
     Simulation | None,

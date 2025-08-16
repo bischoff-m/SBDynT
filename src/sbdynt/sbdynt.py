@@ -1,19 +1,16 @@
 # Globally disable two rebound-specific warnings that come up a lot regarding the
 # use of simulation archive functions
 import warnings
+from typing import Literal
 
+import numpy as np
 import rebound
 
-from sbdynt.add_orbits import *
-from sbdynt.hard_coded_constants import *
-from sbdynt.horizons_api import *
-from sbdynt.machine_learning import *
-from sbdynt.plotting_scripts import *
-from sbdynt.proper_elements import *
-from sbdynt.resonances import *
-from sbdynt.run_reb import *
-from sbdynt.tno import *
-from sbdynt.tools import *
+from sbdynt import tools
+from sbdynt.machine_learning import run_and_MLclassify_TNO
+from sbdynt.proper_elements import calc_proper_elements, proper_elements
+from sbdynt.run_reb import run_simulation
+from sbdynt.tno import setup_default_tno_integration
 
 warnings.filterwarnings(
     "ignore",
@@ -52,8 +49,8 @@ def run_tno(
     des=None,
     clones=None,
     datadir="",
-    archivefile=None,
-    logfile=False,
+    archivefile: str | bool = False,
+    logfile: bool | Literal["screen"] = False,
     deletefile=False,
 ):
     """
@@ -63,8 +60,8 @@ def run_tno(
         print("The designation of a TNO must be provided")
         return None
 
-    if logfile == True:
-        logf = log_file_name(des=des)
+    if logfile is True:
+        logf = tools.log_file_name(des=des)
     else:
         logf = logfile
     if datadir and logf and logf != "screen":
@@ -72,7 +69,7 @@ def run_tno(
 
     if logf:
         logmessage = "Initializing a TNO simulation instance by querying JPL"
-        writelog(logf, logmessage)
+        tools.writelog(logf, logmessage)
 
     iflag, sim, epoch, clones, cloning_method, weights = (
         setup_default_tno_integration(
@@ -81,7 +78,6 @@ def run_tno(
             datadir=datadir,
             save_sbdb=False,
             saveic=True,
-            archivefile=archivefile,
             logfile=logfile,
         )
     )
@@ -97,12 +93,12 @@ def run_tno(
     tno_results.cloning_method = cloning_method
     tno_results.clone_weights = weights
 
-    icfile = ic_file_name(des=des)
+    icfile = tools.ic_file_name(des=des)
     if datadir:
         icfile = datadir + "/" + icfile
 
-    if archivefile == None:
-        file = archive_file_name(des=des)
+    if archivefile is True:
+        file = tools.archive_file_name(des=des)
     if datadir:
         file = datadir + "/" + file
     tno_results.archivefile = file
@@ -133,7 +129,7 @@ def run_tno(
             logmessage = "This is most likely a scattering TNO.\n"
             logmessage += "Proper a,e,sini will be 10 Myr averages.\n"
             logmessage += "No further integration needed."
-            writelog(logf, logmessage)
+            tools.writelog(logf, logmessage)
         tno_results.proper_elements = proper_elements(clones)
         tno_results.proper_elements.a = tno_class.features.a_mean
         tno_results.proper_elements.e = tno_class.features.e_mean
@@ -145,7 +141,7 @@ def run_tno(
                 "Running additional forward integrations for the synthetic\n"
             )
             logmessage += "proper elements calculation\n"
-            writelog(logf, logmessage)
+            tools.writelog(logf, logmessage)
 
         rflag, sim = run_simulation(
             sim,
@@ -153,8 +149,8 @@ def run_tno(
             archivefile=archivefile,
             datadir=datadir,
             logfile=logfile,
-            tmax=50e6,
-            tout=1000.0,
+            tmax=int(50e6),
+            tout=1000,
         )
         if rflag < 1:
             print("Failed at additional forward integration stage")
@@ -165,12 +161,12 @@ def run_tno(
                 "Running additional backward integrations for the synthetic\n"
             )
             logmessage += "proper elements calculation\n"
-            writelog(logf, logmessage)
+            tools.writelog(logf, logmessage)
 
         try:
             sa = rebound.Simulationarchive(icfile)
             sim2 = sa[0]
-        except:
+        except Exception:
             print(
                 "failed to read in the saved initial conditions file to restart from t=0"
             )
@@ -182,8 +178,8 @@ def run_tno(
             archivefile=archivefile,
             datadir=datadir,
             logfile=logfile,
-            tmax=-50e6,
-            tout=1000.0,
+            tmax=int(-50e6),
+            tout=1000,
         )
         if rflag < 1:
             print("Failed at backward integration stage")
@@ -191,7 +187,7 @@ def run_tno(
 
         if logf:
             logmessage = "Running the synthetic proper elements calculation\n"
-            writelog(logf, logmessage)
+            tools.writelog(logf, logmessage)
 
         pflag, pe = calc_proper_elements(
             des=des,

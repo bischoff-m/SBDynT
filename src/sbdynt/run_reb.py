@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 import numpy as np
 import rebound
@@ -188,7 +189,7 @@ def initialize_simulation(
     cloning_method="Gaussian",
     datadir="",
     saveic=False,
-    logfile=False,
+    logfile: bool | Literal["screen"] = False,
     save_sbdb=False,
 ):
     """
@@ -236,12 +237,12 @@ def initialize_simulation(
     flag = 0
     epoch = None
 
-    if des == None:
+    if des is None:
         print("The designation of the small body must be provided")
         print("failed in horizons_api.initialize_simulation()")
         return flag, epoch, sim
 
-    if logfile == True:
+    if logfile is True:
         logfile = tools.log_file_name(des=des)
     if datadir and logfile and logfile != "screen":
         logfile = datadir + "/" + logfile
@@ -347,7 +348,7 @@ def initialize_simulation(
     sim.move_to_com()
 
     if saveic:
-        if saveic == True:
+        if saveic is True:
             ic_file = tools.ic_file_name(des=des)
         else:
             ic_file = saveic
@@ -375,7 +376,7 @@ def initialize_simulation_at_epoch(
     epoch=2459580.5,
     datadir="",
     saveic=False,
-    logfile=False,
+    logfile: bool | Literal["screen"] = False,
 ):
     """
     inputs:
@@ -403,18 +404,18 @@ def initialize_simulation_at_epoch(
     """
     flag = 0
 
-    if des == None:
+    if des is None:
         print("The designation of one or more small bodies must be provided")
         print("failed in run_reb.initialize_simulation_at_epoch()")
         return flag, 0.0, sim
 
-    if logfile == True:
+    if logfile is True:
         logfile = tools.log_file_name(des=des[0])
     if datadir and logfile and logfile != "screen":
         logfile = datadir + "/" + logfile
 
     if logfile:
-        logmessage = "simulation epoch: " + epoch + "\n"
+        logmessage = f"simulation epoch: {epoch}\n"
         tools.writelog(logfile, logmessage)
 
     # make sure planets is a list and make all planet names lowercase
@@ -497,7 +498,7 @@ def initialize_simulation_at_epoch(
     sim.move_to_com()
 
     if saveic:
-        if saveic == True:
+        if saveic is True:
             ic_file = tools.ic_file_name(des=des[0])
         else:
             ic_file = saveic
@@ -524,7 +525,7 @@ def run_simulation(
     deletefile=False,
     integrator="mercurius",
     datadir="",
-    logfile=False,
+    logfile: bool | Literal["screen"] = False,
 ):
     """
     run a simulation saving to a simulation archive every tout
@@ -574,8 +575,8 @@ def run_simulation(
     if datadir:
         archivefile = datadir + "/" + archivefile
 
-    if logfile == True:
-        if des == None:
+    if logfile is True:
+        if des is None:
             print(
                 "You must provide either a logfile name (or logfile='screen') or "
             )
@@ -589,12 +590,12 @@ def run_simulation(
         logfile = datadir + "/" + logfile
 
     # check for integrator choice and set any required extra parameters
-    if integrator.lower == "mercurius".lower:
+    if integrator.lower() == "mercurius".lower():
         sim.integrator = "mercurius"
         sim.collision = "direct"
         sim.ri_mercurius.hillfac = 3.0
         sim.collision_resolve = "merge"
-    elif integrator.lower == "whfast".lower:
+    elif integrator.lower() == "whfast".lower():
         sim.integrator = "whfast"
     elif integrator == "ias15":
         sim.integrator = "ias15"
@@ -671,7 +672,7 @@ def initialize_simulation_from_simarchive(
     """
     flag = 0
 
-    if des == None:
+    if des is None:
         print("The designation of one or more small bodies must be provided")
         print("run_reb.initialize_simulation_from_simarchive failed")
         return flag, None, 0
@@ -684,14 +685,14 @@ def initialize_simulation_from_simarchive(
 
     # try all the potential default file names if the archive file is not
     # specified
-    if archivefile == None:
+    if archivefile is None:
         archivefile = tools.archive_file_name(des)
         if datadir:
             archivefile = datadir + "/" + archivefile
 
         try:
             sim = rebound.Simulation(archivefile)
-        except:
+        except Exception:
             # that didn't work, see if there's a standard initial conditions file
             archivefile2 = tools.ic_file_name(des)
             if datadir:

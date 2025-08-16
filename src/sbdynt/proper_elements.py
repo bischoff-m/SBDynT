@@ -1,6 +1,7 @@
 from importlib import resources as impresources
 from os import path
 from pickle import dump, load
+from typing import Literal
 
 import numpy as np
 import rebound
@@ -80,7 +81,7 @@ def calc_proper_elements(
     clones=None,
     tmin=None,
     tmax=None,
-    logfile=False,
+    logfile: bool | Literal["screen"] = False,
     return_timeseries=False,
     default_run=True,
 ):
@@ -90,17 +91,17 @@ def calc_proper_elements(
 
     flag = 0
 
-    if des == None:
+    if des is None:
         print("The designation of the small body must be provided")
         print("failed at proper_elements.calc_proper_elements()")
         return flag, None
 
-    if archivefile == None:
+    if archivefile is None:
         archivefile = tools.archive_file_name(des)
     if datadir:
         archivefile = datadir + "/" + archivefile
 
-    if logfile == True:
+    if logfile is True:
         logf = tools.log_file_name(des=des)
     else:
         logf = logfile

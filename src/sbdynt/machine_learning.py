@@ -1,6 +1,7 @@
 from importlib import resources as impresources
 from os import path
 from pickle import dump, load
+from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -1160,9 +1161,9 @@ def run_and_MLclassify_TNO(
     sim: Simulation | None = None,
     clones: int | None = None,
     datadir="",
-    archivefile=None,
-    deletefile=False,
-    logfile=False,
+    archivefile: str | bool | None = None,
+    deletefile: bool = False,
+    logfile: bool | Literal["screen"] = False,
 ) -> tuple[int, TNO_ML_outputs | None, Simulation | None]:
     """
     add documentation here...
@@ -1183,7 +1184,6 @@ def run_and_MLclassify_TNO(
                 datadir=datadir,
                 save_sbdb=False,
                 saveic=False,
-                archivefile=archivefile,
                 logfile=logfile,
             )
         )  # type: ignore
@@ -1191,13 +1191,6 @@ def run_and_MLclassify_TNO(
             print("Failed at simulation initialization stage")
             print("failed at machine_learning.run_and_MLclassify_TNO()")
             return flag, None, sim
-
-    if logfile:
-        logf = tools.log_file_name(des=des)
-    else:
-        logf = logfile
-    if datadir and logf and logf != "screen":
-        logf = datadir + "/" + logf
 
     flag = 0
 

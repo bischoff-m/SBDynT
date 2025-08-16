@@ -1,7 +1,8 @@
-import numpy as np
 import re
-import rebound
 from datetime import date
+
+import numpy as np
+import rebound
 
 
 # define the default file-naming schemes

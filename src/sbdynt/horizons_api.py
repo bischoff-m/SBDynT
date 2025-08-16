@@ -1,11 +1,11 @@
 # external modules to be imported
-from astroquery.jplsbdb import SBDB
-import numpy as np
-import requests
 import json
 import textwrap
 from pickle import dump
 
+import numpy as np
+import requests
+from astroquery.jplsbdb import SBDB
 
 # internal modules
 from sbdynt import tools

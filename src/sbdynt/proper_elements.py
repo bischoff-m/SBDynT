@@ -1,15 +1,13 @@
-import rebound
+from importlib import resources as impresources
+from os import path
+from pickle import dump, load
+
 import numpy as np
+import rebound
 from scipy import signal
 
 # local
-from sbdynt import PEdata
-from sbdynt import tools
-from pickle import dump
-from pickle import load
-from importlib import resources as impresources
-from os import path
-
+from sbdynt import PEdata, tools
 
 # files that contain pre-computed planet frequencies based on
 # which planets are in the simulations

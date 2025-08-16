@@ -2,8 +2,7 @@ import numpy as np
 import rebound
 
 # internal modules
-from sbdynt import tools
-from sbdynt import run_reb
+from sbdynt import run_reb, tools
 
 
 def initialize_from_heliocentric_Find_Orb_orbit(

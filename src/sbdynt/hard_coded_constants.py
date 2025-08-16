@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # set of reasonable whfast simulation timesteps for each planet
 # (1/20 of its orbital period for terrestrial planets, 1/30 for giants)
 # dt[0] is a placeholder since the planets are indexed starting

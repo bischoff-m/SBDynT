@@ -1,6 +1,6 @@
-from sbdynt import tools
-from sbdynt import run_reb
 import numpy as np
+
+from sbdynt import run_reb, tools
 
 
 def setup_default_tno_integration(

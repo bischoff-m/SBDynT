@@ -1,10 +1,10 @@
-import rebound
+from datetime import datetime
+
 import numpy as np
+import rebound
 
 # local
-from sbdynt import horizons_api
-from sbdynt import tools
-from datetime import datetime
+from sbdynt import horizons_api, tools
 
 
 def add_planets(sim, planets=["all"], epoch=2459580.5):

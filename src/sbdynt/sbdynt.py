@@ -1,19 +1,19 @@
-from sbdynt.horizons_api import *
-from sbdynt.tools import *
-from sbdynt.resonances import *
-from sbdynt.run_reb import *
-from sbdynt.plotting_scripts import *
-from sbdynt.hard_coded_constants import *
-from sbdynt.add_orbits import *
-from sbdynt.machine_learning import *
-from sbdynt.proper_elements import *
-from sbdynt.tno import *
-
-import rebound
-
 # Globally disable two rebound-specific warnings that come up a lot regarding the
 # use of simulation archive functions
 import warnings
+
+import rebound
+
+from sbdynt.add_orbits import *
+from sbdynt.hard_coded_constants import *
+from sbdynt.horizons_api import *
+from sbdynt.machine_learning import *
+from sbdynt.plotting_scripts import *
+from sbdynt.proper_elements import *
+from sbdynt.resonances import *
+from sbdynt.run_reb import *
+from sbdynt.tno import *
+from sbdynt.tools import *
 
 warnings.filterwarnings(
     "ignore",

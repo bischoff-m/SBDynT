@@ -21,8 +21,15 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/sbdynt"]
 
+[tool.uv]
+dev-dependencies = ["pytest>=8.4.1", "python-call-graph>=2.1.4", "ruff>=0.12.9"]
+
+
 [tool.ruff]
 line-length = 80
+fix = true
 
-[tool.uv]
-dev-dependencies = ["python-call-graph>=2.1.4"]
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true

@@ -1,18 +1,15 @@
+from importlib import resources as impresources
+from os import path
+from pickle import dump, load
+
 import numpy as np
 import pandas as pd
-from sbdynt import tools
-from sbdynt import run_reb
-from sbdynt import MLdata
-from sbdynt import tno
-
-from os import path
+from rebound import Simulation
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import GradientBoostingClassifier
-from pickle import dump
-from pickle import load
-from importlib import resources as impresources
 
+from sbdynt import MLdata, run_reb, tno, tools
 
 # define the default file scheme for the machine learning datasets
 
@@ -610,16 +607,12 @@ def calc_ML_features(
         or delta_length_long > 5e2
     ):
         print(
-            "The length and output cadence of the provided data series are not sufficiently close"
+            "The length and output cadence of the provided data series are not sufficiently close\n"
+            "to that expected for the TNO machine learning classifier. The classifier was trained\n"
+            "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and\n"
+            "2) a longer, 10 Myr integration with outputs every 1000 years.\n"
+            "Failed at machine_learning.calc_ML_features()\n"
         )
-        print(
-            "to that expected for the TNO machine learning classifier. The classifier was trained"
-        )
-        print(
-            "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and"
-        )
-        print("2) a longer, 10 Myr integration with outputs every 1000 years.")
-        print("Failed at machine_learning.calc_ML_features()")
         return flag, None
     if (
         delta_nlong > 0
@@ -628,19 +621,13 @@ def calc_ML_features(
         or delta_length_long > 100.0
     ):
         print(
-            "Warning: The length and output cadence of the provided data series are not identical"
+            "Warning: The length and output cadence of the provided data series are not identical\n"
+            "to that expected for the TNO machine learning classifier. The classifier was trained\n"
+            "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and\n"
+            "2) a longer, 10 Myr integration with outputs every 1000 years.\n"
+            "The provided time series are close, so the code will proceed, but consider adjusting\n"
+            "your integrations to exactly match those criteria.\n"
         )
-        print(
-            "to that expected for the TNO machine learning classifier. The classifier was trained"
-        )
-        print(
-            "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and"
-        )
-        print("2) a longer, 10 Myr integration with outputs every 1000 years.")
-        print(
-            "The provided time series are close, so the code will proceed, but consider adjusting"
-        )
-        print("your integrations to exactly match those criteria.")
         flag = 2
 
     ########################################################
@@ -774,7 +761,7 @@ def calc_ML_features(
     dt = time[1:] - time[:-1]
     try:
         adot = (a[:, 1:] - a[:, :-1]) / dt
-    except:
+    except Exception:
         print(
             "problem in calculating the long simulation time derivatives, probably"
         )
@@ -1159,8 +1146,8 @@ def calc_ML_features(
 
 
 def run_and_MLclassify_TNO(
-    sim=None,
-    des=None,
+    des: str,
+    sim: Simulation | None = None,
     clones=None,
     datadir="",
     archivefile=None,

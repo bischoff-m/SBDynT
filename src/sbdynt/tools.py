@@ -298,7 +298,7 @@ def split(word):
     return [char for char in word]
 
 
-def mpc_designation_translation(obj):
+def mpc_designation_translation(obj) -> tuple[str, str]:
     """
     If an unpacked provisional MPC designation is input, this routine
     outputs a packed version of that designation. If a packed number

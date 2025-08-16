@@ -1,17 +1,25 @@
 import numpy as np
+from rebound import Simulation
 
 from sbdynt import run_reb, tools
 
 
 def setup_default_tno_integration(
-    des=None,
-    clones=None,
+    des: str,
+    clones: int | None = None,
     datadir="",
     save_sbdb=False,
     saveic=False,
     archivefile=None,
     logfile=False,
-):
+) -> tuple[
+    int,
+    Simulation | None,
+    float | None,
+    int | None,
+    str | None,
+    np.ndarray | None,
+]:
     """ """
     flag = 0
     if des is None:
@@ -46,7 +54,7 @@ def setup_default_tno_integration(
         )
     else:
         cloning_method = "Gaussian"
-        iflag, epoch, sim = run_reb.initialize_simulation(
+        iflag, epoch, sim = run_reb.initialize_simulation(  # type: ignore
             planets=["outer"],
             des=des,
             clones=clones,

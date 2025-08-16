@@ -23,6 +23,13 @@ default_trained_classifier_dictionary = "trained-TNO-classifier-dictionary.pkl"
 
 
 class TNO_ML_outputs:
+    classes_dictionary: dict[int, str] | None
+    class_probs: np.ndarray | None
+    clone_classification: list[str] | None
+    clone_confidence: np.ndarray | None
+    most_common_class: str | None
+    fraction_most_common_class: float | None
+
     # class that stores the information that comes out of the
     # TNO machine learning classifier
     def __init__(self, clones=0):
@@ -30,26 +37,29 @@ class TNO_ML_outputs:
         # make an empty features instance
         self.features = TNO_ML_features(self.clones)
         # parameters related to the classifier
-        self.classes_dictionary = None
-        self.class_probs = None
+        # self.classes_dictionary = None
+        # self.class_probs = None
 
         # clone-by-clone predicted classification and
         # confidence level for that classification
-        self.clone_classification = None
-        self.clone_confidence = None
+        # self.clone_classification = None
+        # self.clone_confidence = None
 
-        self.most_common_class = None
-        self.fraction_most_common_class = None
+        # self.most_common_class = None
+        # self.fraction_most_common_class = None
 
     def determine_clone_classification(self):
+        if self.classes_dictionary is None or self.class_probs is None:
+            raise Exception("Classifier not trained")
+
         # find the most probable class and associated confidence on a
         # clone-by-clone basis
         # make an empty list and empty array
-        self.clone_classification = (self.clones + 1) * [None]
+        self.clone_classification = (self.clones + 1) * [""]
         self.clone_confidence = np.zeros(self.clones + 1)
         for n in range(self.clones + 1):
             cn = np.argmax(self.class_probs[n])
-            self.clone_classification[n] = self.classes_dictionary[cn]
+            self.clone_classification[n] = self.classes_dictionary[int(cn)]
             self.clone_confidence[n] = self.class_probs[n, cn]
 
             # do checks for the scattering/detached boundary
@@ -1148,12 +1158,12 @@ def calc_ML_features(
 def run_and_MLclassify_TNO(
     des: str,
     sim: Simulation | None = None,
-    clones=None,
+    clones: int | None = None,
     datadir="",
     archivefile=None,
     deletefile=False,
     logfile=False,
-):
+) -> tuple[int, TNO_ML_outputs | None, Simulation | None]:
     """
     add documentation here...
     """
@@ -1176,7 +1186,7 @@ def run_and_MLclassify_TNO(
                 archivefile=archivefile,
                 logfile=logfile,
             )
-        )
+        )  # type: ignore
         if iflag < 1:
             print("Failed at simulation initialization stage")
             print("failed at machine_learning.run_and_MLclassify_TNO()")
@@ -1793,9 +1803,6 @@ def train_and_test_TNO_classifier(training_file=None):
         train_test_split(dataset, classes, test_size=0.333, random_state=rs)
     )
 
-    ids_train = features_train["particle_id"].to_numpy()
-    ids_test = features_test["particle_id"].to_numpy()
-
     features_train.drop(drop_columns, axis=1, inplace=True)
     features_train = features_train.to_numpy()
 
@@ -1831,7 +1838,7 @@ def train_TNO_classifier(training_file=None):
     and use the entire file as the training set
     """
 
-    if training_file == None:
+    if training_file is None:
         training_file = impresources.files(MLdata) / default_TNO_training_data
 
     dataset = read_TNO_training_data(training_file)
@@ -1850,13 +1857,14 @@ def train_TNO_classifier(training_file=None):
         "res_n",
     ]
 
-    feature_names = []  # dataset.columns.to_list()
-    # features = []
+    feature_names = []
+
     for i in range(0, len(dataset.columns)):
         if dataset.columns[i] not in (drop_columns):
             feature_names.append(dataset.columns[i])
 
-    clasfeat = "simplified_G08"
+    # clasfeat = "simplified_G08"
+    clasfeat = "G08_class"
     all_types = list(set(dataset[clasfeat]))
     types_dict = {all_types[i]: i for i in range(len(all_types))}
     classes_dict = {i: all_types[i] for i in range(len(all_types))}
@@ -1980,7 +1988,7 @@ def initialize_TNO_classifier(
         try:
             with open(classifier_file, "rb") as f:
                 classifier = load(f)
-        except:
+        except Exception:
             print("Couldn't read in saved classifier file %s" % classifier_file)
             print("try deleting the file and trying again")
             print("failed at machine_learning.initialize_TNO_classifier()")
@@ -1989,7 +1997,7 @@ def initialize_TNO_classifier(
         try:
             with open(dict_file, "rb") as f:
                 dictionary = load(f)
-        except:
+        except Exception:
             print(
                 "Couldn't read in saved classifier dictionary file %s"
                 % dict_file

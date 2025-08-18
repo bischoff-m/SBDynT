@@ -407,7 +407,7 @@ def initialize_simulation_at_epoch(
     if des is None:
         print("The designation of one or more small bodies must be provided")
         print("failed in run_reb.initialize_simulation_at_epoch()")
-        return flag, 0.0, sim
+        return flag, 0.0, None
 
     if logfile is True:
         logfile = tools.log_file_name(des=des[0])

@@ -43,7 +43,7 @@ def setup_default_tno_integration(
             logmessage = "Clones were not specified, so the default behavior is to return\n"
             logmessage += "a best-fit and 3-sigma minimum and maximum semimajor axis clones\n"
             tools.writelog(logf, logmessage)
-        iflag, epoch, sim, weights = run_reb.initialize_simulation(
+        iflag, epoch, sim, weights = run_reb.initialize_simulation(  # type: ignore
             planets=["outer"],
             des=des,
             clones=clones,

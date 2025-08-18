@@ -73,42 +73,12 @@ def read_sa_for_resonance(
     if des == None:
         print("You must pass a designation to this function")
         print("resonances.read_sa_for_resonance failed")
-        return (
-            0,
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [0.0],
-        )
+        return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     if planet == None:
         print("You must pass a planet name to this function")
         print("resonances.read_sa_for_resonance failed")
-        return (
-            0,
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [0.0],
-        )
+        return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     if archivefile == None:
         archivefile = tools.archive_file_name(des)
@@ -127,44 +97,14 @@ def read_sa_for_resonance(
                 "The specified resonant integers are not allowed! They do not sum to zero!"
             )
             print("resonances.read_sa_for_resonance failed")
-            return (
-                0,
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [0.0],
-            )
+            return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
         node_sum = s + n
         if node_sum % 2:
             print(
                 "The specified resonant integers are not allowed! The sum of nodes is odd!"
             )
             print("resonances.read_sa_for_resonance failed")
-            return (
-                0,
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [
-                    [0.0],
-                ],
-                [0.0],
-            )
+            return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     # read the simulation archive and calculate resonant angles
     try:
@@ -173,22 +113,7 @@ def read_sa_for_resonance(
         print("Problem reading the simulation archive file:")
         print(archivefile)
         print("resonances.read_sa_for_resonance failed")
-        return (
-            0,
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [
-                [0.0],
-            ],
-            [0.0],
-        )
+        return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     nout = len(sa)
 

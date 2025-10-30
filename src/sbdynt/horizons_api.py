@@ -1,4 +1,5 @@
 # external modules to be imported
+import hashlib
 import json
 import pickle
 import textwrap
@@ -22,12 +23,38 @@ def get_SBDB_query(designation: str | None) -> object | None:
         return None
     file = Path(f"data/sbdb_queries/{designation}.pkl")
     if file.exists():
+        # print(f"Using cached SBDB query for {designation}")
         with open(file, "rb") as f:
             return pickle.load(f)
 
+    # print(f"Querying SBDB for {designation}...")
     obj = SBDB.query(
         designation, full_precision=True, covariance="mat", phys=True
     )
+    file.parent.mkdir(parents=True, exist_ok=True)
+    # Write pickle file
+    with open(file, "wb") as f:
+        pickle.dump(obj, f)
+    return obj
+
+
+def get_url_query(url: str) -> dict | None:
+    parts = url.split("&")
+    hash_str = "&".join(parts[:-2])  # exclude START_TIME and STOP_TIME
+
+    filename = hashlib.sha1(hash_str.encode("utf-8")).hexdigest()
+    file = Path(f"data/url_queries/{filename}.pkl")
+    if file.exists():
+        # print(f"Using cached URL query with hash {filename}")
+        with open(file, "rb") as f:
+            return pickle.load(f)
+
+    # print(f"Querying URL with hash {filename}")
+    response = requests.get(url)
+    if response.status_code != 200:
+        return None
+
+    obj = response.json()
     file.parent.mkdir(parents=True, exist_ok=True)
     # Write pickle file
     with open(file, "wb") as f:
@@ -120,9 +147,8 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     )
 
     # run the query and exit if it fails
-    response = requests.get(url)
     try:
-        data = json.loads(response.text)
+        data = get_url_query(url)
     except ValueError:
         tools.print_log("horizons_api.query_horizons_planets failed")
         tools.print_log(
@@ -460,9 +486,8 @@ def query_sb_from_jpl(
         )
 
     # run the query and exit if it fails
-    response = requests.get(url)
     try:
-        data = json.loads(response.text)
+        data = get_url_query(url)
     except ValueError:
         tools.print_log("horizons_api.query_sb_from_jpl failed")
         tools.print_log(
@@ -713,9 +738,8 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
             )
 
         # run the query and exit if it fails
-        response = requests.get(url)
         try:
-            data = json.loads(response.text)
+            data = get_url_query(url)
         except ValueError:
             tools.print_log("horizons_api.query_sb_from_horizons failed")
             tools.print_log(

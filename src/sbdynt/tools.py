@@ -1,9 +1,11 @@
 import re
 from datetime import date
-from typing import Literal
+from typing import Callable, Literal
 
 import numpy as np
 import rebound
+
+print_log: Callable[[str], None] = print
 
 
 # define the default file-naming schemes
@@ -96,7 +98,7 @@ def writelog(logfile: str | Literal["screen"] | None, logmessage: str):
     if logfile is None:
         return
     if logfile == "screen":
-        print(logmessage)
+        print_log(logmessage)
     else:
         with open(logfile, "a") as f:
             f.write(logmessage)
@@ -158,8 +160,8 @@ def aei_to_xv(GM=1.0, a=1, e=0.0, inc=0.0, node=0.0, argperi=0.0, ma=0.0):
 
     # based on M. Duncan's routines in swift
     if e >= 1.0 or e < 0.0 or a < 0.0:
-        print("in tools.aei_to_xv, the provided orbital eccentricity is")
-        print("not between 0 and 1, so cannot proceed with conversion")
+        print_log("in tools.aei_to_xv, the provided orbital eccentricity is")
+        print_log("not between 0 and 1, so cannot proceed with conversion")
         return 0, x, y, z, vx, vy, vz
 
     sp = np.sin(argperi)
@@ -499,8 +501,8 @@ def read_sa_by_hash(
         time (1-d float array): simulations time (years)
     """
     if obj_hash == None:
-        print("The name of an object must be provided as obj_hash")
-        print("tools.read_sa_by_hash failed")
+        print_log("The name of an object must be provided as obj_hash")
+        print_log("tools.read_sa_by_hash failed")
         return (
             0,
             np.zeros(1),
@@ -513,8 +515,8 @@ def read_sa_by_hash(
         )
 
     if archivefile == None:
-        print("A simulation archive file must be provided as archivefile")
-        print("tools.read_sa_by_hash failed")
+        print_log("A simulation archive file must be provided as archivefile")
+        print_log("tools.read_sa_by_hash failed")
         return (
             0,
             np.zeros(1),
@@ -534,9 +536,9 @@ def read_sa_by_hash(
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("tools.read_sa_by_hash failed")
-        print("Problem reading the simulation archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_by_hash failed")
+        print_log("Problem reading the simulation archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -550,9 +552,9 @@ def read_sa_by_hash(
 
     nout = len(sa)
     if nout < 2:
-        print("tools.read_sa_by_hash failed")
-        print("There are fewer than two snapshots in the archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_by_hash failed")
+        print_log("There are fewer than two snapshots in the archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -611,8 +613,10 @@ def read_sa_by_hash(
         try:
             p = sim.particles[obj_hash]
         except:
-            print("tools.read_sa_by_hash failed")
-            print("Problem finding a particle with that hash in the archive")
+            print_log("tools.read_sa_by_hash failed")
+            print_log(
+                "Problem finding a particle with that hash in the archive"
+            )
             return 0, a, e, inc, node, aperi, ma, t
 
         if center == "bary":
@@ -620,8 +624,8 @@ def read_sa_by_hash(
         elif center == "helio":
             com = sim.particles[0]
         else:
-            print("tools.read_sa_by_hash failed")
-            print("center can only be 'bary' or 'helio'\n")
+            print_log("tools.read_sa_by_hash failed")
+            print_log("center can only be 'bary' or 'helio'\n")
             return 0, a, e, inc, node, aperi, ma, t
 
         o = p.orbit(com)
@@ -637,8 +641,8 @@ def read_sa_by_hash(
         it += 1
 
     if it == 0:
-        print("tools.read_sa_by_hash failed")
-        print("There were no simulation archives in the desired time range")
+        print_log("tools.read_sa_by_hash failed")
+        print_log("There were no simulation archives in the desired time range")
         return 0, [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]
     else:
         t = t[0:it]
@@ -702,8 +706,8 @@ def read_sa_for_sbody(
     """
 
     if des == None:
-        print("The designation of a small body must be provided")
-        print("tool.read_sa_for_sbody failed")
+        print_log("The designation of a small body must be provided")
+        print_log("tool.read_sa_for_sbody failed")
         return (
             0,
             np.zeros(1),
@@ -723,9 +727,9 @@ def read_sa_for_sbody(
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("tools.read_sa_for_sbody failed")
-        print("Problem reading the simulation archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody failed")
+        print_log("Problem reading the simulation archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -739,9 +743,9 @@ def read_sa_for_sbody(
 
     nout = len(sa)
     if nout < 2:
-        print("tools.read_sa_for_sbody failed")
-        print("There are fewer than two snapshots in the archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody failed")
+        print_log("There are fewer than two snapshots in the archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -775,10 +779,10 @@ def read_sa_for_sbody(
     else:
         ntp = clones + 1
         if ntp > ntp_max:
-            print(
+            print_log(
                 "Warning! the number of clones in the simulation archive is smaller than"
             )
-            print(
+            print_log(
                 "the number of clones specfied by the user! Resetting the number of clones."
             )
             clones = ntp_max - 1
@@ -804,8 +808,8 @@ def read_sa_for_sbody(
         elif center == "helio":
             com = sim.particles[0]
         else:
-            print("tools.read_sa_for_sbody failed")
-            print("center can only be 'bary' or 'helio'\n")
+            print_log("tools.read_sa_for_sbody failed")
+            print_log("center can only be 'bary' or 'helio'\n")
             return (
                 0,
                 np.zeros(1),
@@ -825,8 +829,8 @@ def read_sa_for_sbody(
             try:
                 p = sim.particles[tp_hash]
             except:
-                print("tools.read_sa_for_sbody failed")
-                print(
+                print_log("tools.read_sa_for_sbody failed")
+                print_log(
                     "Problem finding a particle with that hash in the archive"
                 )
                 return 0, a, e, inc, node, aperi, ma, t
@@ -841,8 +845,8 @@ def read_sa_for_sbody(
         it += 1
 
     if it == 0:
-        print("tools.read_sa_for_sbody failed")
-        print("There were no simulation archives in the desired time range")
+        print_log("tools.read_sa_for_sbody failed")
+        print_log("There were no simulation archives in the desired time range")
         return (
             0,
             np.zeros(1),
@@ -927,8 +931,8 @@ def read_sa_for_sbody_cartesian(
     """
 
     if des == None:
-        print("The designation of a small body must be provided")
-        print("tool.read_sa_for_sbody_cartesian failed")
+        print_log("The designation of a small body must be provided")
+        print_log("tool.read_sa_for_sbody_cartesian failed")
         return flag, None, 0
 
     if archivefile == None:
@@ -939,9 +943,9 @@ def read_sa_for_sbody_cartesian(
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("tools.read_sa_for_sbody_cartesian failed")
-        print("Problem reading the simulation archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody_cartesian failed")
+        print_log("Problem reading the simulation archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -955,9 +959,9 @@ def read_sa_for_sbody_cartesian(
 
     nout = len(sa)
     if nout < 2:
-        print("tools.read_sa_for_sbody_cartesian failed")
-        print("There are fewer than two snapshots in the archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody_cartesian failed")
+        print_log("There are fewer than two snapshots in the archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -1020,8 +1024,8 @@ def read_sa_for_sbody_cartesian(
             dvy = 0.0
             dvz = 0.0
         else:
-            print("tools.read_sa_for_sbody_cartesian failed")
-            print("center can only be 'bary' or 'helio'\n")
+            print_log("tools.read_sa_for_sbody_cartesian failed")
+            print_log("center can only be 'bary' or 'helio'\n")
             return 0, x, y, z, vx, vy, vz, t
 
         for j in range(0, ntp):
@@ -1033,8 +1037,8 @@ def read_sa_for_sbody_cartesian(
             try:
                 p = sim.particles[tp_hash]
             except:
-                print("tools.read_sa_for_sbody_cartesian failed")
-                print(
+                print_log("tools.read_sa_for_sbody_cartesian failed")
+                print_log(
                     "Problem finding a particle with that hash in the archive"
                 )
                 return 0, x, y, z, vx, vy, vz, t
@@ -1048,8 +1052,8 @@ def read_sa_for_sbody_cartesian(
         it += 1
 
     if it == 0:
-        print("tools.rread_sa_for_sbody_cartesian failed")
-        print("There were no simulation archives in the desired time range")
+        print_log("tools.rread_sa_for_sbody_cartesian failed")
+        print_log("There were no simulation archives in the desired time range")
         return (
             0,
             np.zeros(1),
@@ -1115,8 +1119,8 @@ def read_sa_by_hash_cartesian(
     """
 
     if obj_hash == None:
-        print("The name of an object must be provided as obj_hash")
-        print("tools.read_sa_for_sbody_cartesian failed")
+        print_log("The name of an object must be provided as obj_hash")
+        print_log("tools.read_sa_for_sbody_cartesian failed")
         return (
             0,
             np.zeros(1),
@@ -1129,8 +1133,8 @@ def read_sa_by_hash_cartesian(
         )
 
     if archivefile == None:
-        print("A simulation archive file must be provided as archivefile")
-        print("tools.read_sa_for_sbody_cartesian failed")
+        print_log("A simulation archive file must be provided as archivefile")
+        print_log("tools.read_sa_for_sbody_cartesian failed")
         return (
             0,
             np.zeros(1),
@@ -1148,9 +1152,9 @@ def read_sa_by_hash_cartesian(
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("tools.read_sa_for_sbody_cartesian failed")
-        print("Problem reading the simulation archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody_cartesian failed")
+        print_log("Problem reading the simulation archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -1164,9 +1168,9 @@ def read_sa_by_hash_cartesian(
 
     nout = len(sa)
     if nout < 2:
-        print("tools.read_sa_for_sbody_cartesian failed")
-        print("There are fewer than two snapshots in the archive file:")
-        print(archivefile)
+        print_log("tools.read_sa_for_sbody_cartesian failed")
+        print_log("There are fewer than two snapshots in the archive file:")
+        print_log(archivefile)
         return (
             0,
             np.zeros(1),
@@ -1224,15 +1228,17 @@ def read_sa_by_hash_cartesian(
             dvy = 0.0
             dvz = 0.0
         else:
-            print("tools.read_sa_by_hash_cartesian failed")
-            print("center can only be 'bary' or 'helio'\n")
+            print_log("tools.read_sa_by_hash_cartesian failed")
+            print_log("center can only be 'bary' or 'helio'\n")
             return 0, x, y, z, vx, vy, vz, t
 
         try:
             p = sim.particles[obj_hash]
         except:
-            print("tools.read_sa_by_hash_cartesian failed")
-            print("Problem finding a particle with that hash in the archive")
+            print_log("tools.read_sa_by_hash_cartesian failed")
+            print_log(
+                "Problem finding a particle with that hash in the archive"
+            )
             return 0, x, y, z, vx, vy, vz, t
 
         x[it] = p.x - dx
@@ -1244,8 +1250,8 @@ def read_sa_by_hash_cartesian(
         it += 1
 
     if it == 0:
-        print("tools.rread_sa_for_sbody_cartesian failed")
-        print("There were no simulation archives in the desired time range")
+        print_log("tools.rread_sa_for_sbody_cartesian failed")
+        print_log("There were no simulation archives in the desired time range")
         return (
             0,
             np.zeros(1),
@@ -1418,8 +1424,8 @@ def calc_rotating_frame(
     """
 
     if des == None:
-        print("The designation of a small body must be provided as des")
-        print("tools.calc_rotating_frame failed")
+        print_log("The designation of a small body must be provided as des")
+        print_log("tools.calc_rotating_frame failed")
         return (
             0,
             np.zeros(1),
@@ -1432,8 +1438,8 @@ def calc_rotating_frame(
         )
 
     if planet == None:
-        print("The name of a planet must be provided as planet")
-        print("tools.calc_rotating_frame failed")
+        print_log("The name of a planet must be provided as planet")
+        print_log("tools.calc_rotating_frame failed")
         return (
             0,
             np.zeros(1),
@@ -1463,8 +1469,8 @@ def calc_rotating_frame(
     if planet not in planets and planet.lower() in planets:
         planet = planet.lower()
     elif planet not in planets:
-        print("tools.calc_rotating_frame failed")
-        print("specified planet is not in the list of possible planets")
+        print_log("tools.calc_rotating_frame failed")
+        print_log("specified planet is not in the list of possible planets")
         return (
             0,
             np.zeros(1),
@@ -1482,8 +1488,8 @@ def calc_rotating_frame(
     )
 
     if not plflag:
-        print("tools.calc_rotating_frame failed")
-        print("couldn't read in planet's orbital history")
+        print_log("tools.calc_rotating_frame failed")
+        print_log("couldn't read in planet's orbital history")
         return (
             0,
             np.zeros(1),
@@ -1499,8 +1505,8 @@ def calc_rotating_frame(
         des=des, archivefile=archivefile, clones=clones, tmin=tmin, tmax=tmax
     )
     if not tpflag:
-        print("tools.calc_rotating_frame failed")
-        print("couldn't read in small body's cartesian positions")
+        print_log("tools.calc_rotating_frame failed")
+        print_log("couldn't read in small body's cartesian positions")
         return (
             0,
             np.zeros(1),

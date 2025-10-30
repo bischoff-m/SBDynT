@@ -71,13 +71,13 @@ def read_sa_for_resonance(
     """
 
     if des == None:
-        print("You must pass a designation to this function")
-        print("resonances.read_sa_for_resonance failed")
+        tools.print_log("You must pass a designation to this function")
+        tools.print_log("resonances.read_sa_for_resonance failed")
         return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     if planet == None:
-        print("You must pass a planet name to this function")
-        print("resonances.read_sa_for_resonance failed")
+        tools.print_log("You must pass a planet name to this function")
+        tools.print_log("resonances.read_sa_for_resonance failed")
         return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     if archivefile == None:
@@ -93,34 +93,36 @@ def read_sa_for_resonance(
     else:
         checkint = p - q - m - n - r - s
         if checkint != 0:
-            print(
+            tools.print_log(
                 "The specified resonant integers are not allowed! They do not sum to zero!"
             )
-            print("resonances.read_sa_for_resonance failed")
+            tools.print_log("resonances.read_sa_for_resonance failed")
             return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
         node_sum = s + n
         if node_sum % 2:
-            print(
+            tools.print_log(
                 "The specified resonant integers are not allowed! The sum of nodes is odd!"
             )
-            print("resonances.read_sa_for_resonance failed")
+            tools.print_log("resonances.read_sa_for_resonance failed")
             return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     # read the simulation archive and calculate resonant angles
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("Problem reading the simulation archive file:")
-        print(archivefile)
-        print("resonances.read_sa_for_resonance failed")
+        tools.print_log("Problem reading the simulation archive file:")
+        tools.print_log(archivefile)
+        tools.print_log("resonances.read_sa_for_resonance failed")
         return (0, [[0.0]], [[0.0]], [[0.0]], [[0.0]], [0.0])
 
     nout = len(sa)
 
     if nout < 2:
-        print("resonances.read_sa_for_resonance failed")
-        print("There are fewer than two snapshots in the archive file:")
-        print(archivefile)
+        tools.print_log("resonances.read_sa_for_resonance failed")
+        tools.print_log(
+            "There are fewer than two snapshots in the archive file:"
+        )
+        tools.print_log(archivefile)
         return 0, [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0], ""
 
     if clones == None:
@@ -161,8 +163,8 @@ def read_sa_for_resonance(
         try:
             pl = sim.particles[planet]
         except:
-            print("resonances.read_sa_for_resonance failed")
-            print("Problem finding the planet in the archive")
+            tools.print_log("resonances.read_sa_for_resonance failed")
+            tools.print_log("Problem finding the planet in the archive")
             return 0, a, e, inc, node, aperi, ma, phi, t, ""
 
         if center == "bary":
@@ -170,8 +172,8 @@ def read_sa_for_resonance(
         elif center == "helio":
             com = sim.particles[0]
         else:
-            print("resonances.read_sa_for_resonance failed")
-            print("center can only be 'bary' or 'helio'\n")
+            tools.print_log("resonances.read_sa_for_resonance failed")
+            tools.print_log("center can only be 'bary' or 'helio'\n")
             return 0, a, e, inc, node, aperi, ma, phi, t, ""
 
         o_pl = pl.orbit(com)
@@ -190,8 +192,8 @@ def read_sa_for_resonance(
             try:
                 tp = sim.particles[tp_hash]
             except:
-                print("resonances.read_sa_for_resonance failed")
-                print(
+                tools.print_log("resonances.read_sa_for_resonance failed")
+                tools.print_log(
                     "Problem finding a particle with that hash in the archive"
                 )
                 return 0, a, e, inc, node, aperi, ma, phi, t, ""
@@ -221,8 +223,10 @@ def read_sa_for_resonance(
             phi[j, it] = pt
         it += 1
     if it == 0:
-        print("resonances.read_sa_for_resonance failed")
-        print("There were no simulation archives in the desired time range")
+        tools.print_log("resonances.read_sa_for_resonance failed")
+        tools.print_log(
+            "There were no simulation archives in the desired time range"
+        )
         return 0, a, e, inc, node, aperi, ma, phi, t, ""
     else:
         t = t[0:it]
@@ -354,13 +358,13 @@ def plot_resonance(
         try:
             temp = len(a.shape)
         except:
-            print(
+            tools.print_log(
                 "You must either pass orbital element arrays (a,e,i, phi and time)"
             )
-            print(
+            tools.print_log(
                 "or a designation and this planet to this routine to generate plots"
             )
-            print("failed at resonances.plot_resonance()")
+            tools.print_log("failed at resonances.plot_resonance()")
             return flag, None
     else:
         try:
@@ -385,8 +389,8 @@ def plot_resonance(
                 )
             )
             if rflag < 1:
-                print("failed at resonances.plot_resonance()")
-                print("couldn't read in the simulation archive")
+                tools.print_log("failed at resonances.plot_resonance()")
+                tools.print_log("couldn't read in the simulation archive")
                 return flag, None
 
     if len(a.shape) < 2:
@@ -394,9 +398,15 @@ def plot_resonance(
         if clones == None:
             clones = 0
         if clones > 0:
-            print("warning! plotting_scripts.plot_aei() was asked to plot")
-            print("clones, but there are no clones in the archive file or")
-            print("the provided arrays. Only the best fit will be plotted")
+            tools.print_log(
+                "warning! plotting_scripts.plot_aei() was asked to plot"
+            )
+            tools.print_log(
+                "clones, but there are no clones in the archive file or"
+            )
+            tools.print_log(
+                "the provided arrays. Only the best fit will be plotted"
+            )
             clones = 0
             flag = 2
         ntp = 1
@@ -619,7 +629,9 @@ def analyze_res(
     # do a bunch of checks to make sure tmin, tmax, and dtwindow are sensible
     nout = len(t)
     if nout < 1000:
-        print("not enough outputs to do a resonance analysis (need >1000)")
+        tools.print_log(
+            "not enough outputs to do a resonance analysis (need >1000)"
+        )
         return 0, a_stats, e_stats, i_stats, phi_stats, fwindows
 
     i_t0 = -1
@@ -627,13 +639,17 @@ def analyze_res(
     if tmin == t[0]:
         i_t0 = 0
     elif t[0] > tmin:
-        print("tmin is less than t[0], starting at tmin=%f instead" % t[0])
+        tools.print_log(
+            "tmin is less than t[0], starting at tmin=%f instead" % t[0]
+        )
         i_t0 = 0
 
     if np.abs(tmax - t[-1]) < 1:
         i_tf = nout - 1
     elif t[-1] < tmax:
-        print("tmax is greater than t[-1], starting at tmax=%f instead" % t[-1])
+        tools.print_log(
+            "tmax is greater than t[-1], starting at tmax=%f instead" % t[-1]
+        )
         i_tf = nout - 1
 
     for i in range(1, nout):
@@ -649,7 +665,7 @@ def analyze_res(
 
     nout = len(t[i_t0:i_tf])
     if nout < 300:
-        print(
+        tools.print_log(
             "not enough outputs between tmin and tmax to do a resonance analysis (need >300)"
         )
         return 0, a_stats, e_stats, i_stats, phi_stats, fwindows
@@ -664,7 +680,7 @@ def analyze_res(
         dt = t[i] - t[i - 1]
         deltadt = np.abs(dt - dt0) / dt0
         if deltadt > 0.015 and i > i_t0 and sampling_warning == 0:
-            print("caution: uneven time sampling for the windows")
+            tools.print_log("caution: uneven time sampling for the windows")
             flag = 2
             sampling_warning = 1
         twindow = t[i] - t[i_win1]
@@ -672,22 +688,26 @@ def analyze_res(
             n_windows += 1
             n_points = i - i_win1
             if n_points < 150 and nwindows_warning == 0:
-                print("caution: at least one window has <150 points")
-                print("lowering libration threshold to 340 degrees as a result")
+                tools.print_log("caution: at least one window has <150 points")
+                tools.print_log(
+                    "lowering libration threshold to 340 degrees as a result"
+                )
                 dpmax = 340.0 * deg_to_rad
                 flag = 2
                 nwindows_warning = 1
             if n_points < 80:
-                print(
+                tools.print_log(
                     "window time is too short for the dataset (one window has <80 points)"
                 )
                 return 0, a_stats, e_stats, i_stats, phi_stats, fwindows
             i_win1 = i
     if n_windows < 10:
-        print("caution: fewer than 10 distinct windows across the time sample")
+        tools.print_log(
+            "caution: fewer than 10 distinct windows across the time sample"
+        )
         flag = 2
     if n_windows < 3:
-        print("not enough windows to do a meaningful analysis")
+        tools.print_log("not enough windows to do a meaningful analysis")
         return 0.0, a_stats, e_stats, i_stats, phi_stats, fwindows
     # end checks of the time sampling
 

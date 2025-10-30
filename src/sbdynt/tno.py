@@ -24,8 +24,8 @@ def setup_default_tno_integration(
     """ """
     flag = 0
     if des is None:
-        print("The designation of a TNO must be provided")
-        print("failed at tno.setup_default_tno_integration()")
+        tools.print_log("The designation of a TNO must be provided")
+        tools.print_log("failed at tno.setup_default_tno_integration()")
         return flag, None, None, None, None, None
 
     if logfile:
@@ -68,7 +68,7 @@ def setup_default_tno_integration(
         weights = np.ones(clones + 1)
 
     if iflag < 1:
-        print("failed at tno.setup_default_tno_integration()")
+        tools.print_log("failed at tno.setup_default_tno_integration()")
         return flag, None, None, None, None, None
 
     flag = 1

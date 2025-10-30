@@ -104,32 +104,34 @@ class TNO_ML_outputs:
         return
 
     def print_results(self):
-        print("Most common classification: %s\n" % self.most_common_class)
+        tools.print_log(
+            "Most common classification: %s\n" % self.most_common_class
+        )
         percentage = 100 * self.fraction_most_common_class
-        print("Shared by %f percent of clones\n\n" % percentage)
+        tools.print_log("Shared by %f percent of clones\n\n" % percentage)
 
         nclas = len(self.classes_dictionary)
-        print(
+        tools.print_log(
             "Clone number, most probable G08 class, probability of that class, ",
             end="",
         )
-        print("probability of ", end="")
+        tools.print_log("probability of ", end="")
         for n in range(nclas):
-            print("%s, " % self.classes_dictionary[n], end="")
-        print("\n", end="")
+            tools.print_log("%s, " % self.classes_dictionary[n], end="")
+        tools.print_log("\n", end="")
         format_string = "%d, %s, "
         for n in range(nclas - 1):
             format_string += "%e, "
         format_string += "%e,\n"
         for n in range(0, self.clones + 1):
-            print(
+            tools.print_log(
                 "%d, %s, %e, "
                 % (n, self.clone_classification[n], self.clone_confidence[n]),
                 end="",
             )
             for j in range(nclas):
-                print("%e, " % self.class_probs[n][j], end="")
-            print("\n", end="")
+                tools.print_log("%e, " % self.class_probs[n][j], end="")
+            tools.print_log("\n", end="")
 
 
 class TNO_ML_features:
@@ -514,7 +516,7 @@ class TNO_ML_features:
         features_list = np.zeros([(self.clones + 1), len(self.feature_names)])
         for t in self.feature_names:
             flist = self.__getattribute__(t)
-            print(t, ": ", flist[n])
+            tools.print_log(t, ": ", flist[n])
         return
 
 
@@ -617,7 +619,7 @@ def calc_ML_features(
         or delta_length_long > 1e4
         or delta_length_long > 5e2
     ):
-        print(
+        tools.print_log(
             "The length and output cadence of the provided data series are not sufficiently close\n"
             "to that expected for the TNO machine learning classifier. The classifier was trained\n"
             "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and\n"
@@ -631,7 +633,7 @@ def calc_ML_features(
         or delta_length_long > 5.0
         or delta_length_long > 100.0
     ):
-        print(
+        tools.print_log(
             "Warning: The length and output cadence of the provided data series are not identical\n"
             "to that expected for the TNO machine learning classifier. The classifier was trained\n"
             "on two time series: 1) a short, 0.5 Myr integration with outputs every 50 years and\n"
@@ -773,10 +775,12 @@ def calc_ML_features(
     try:
         adot = (a[:, 1:] - a[:, :-1]) / dt
     except Exception:
-        print(
+        tools.print_log(
             "problem in calculating the long simulation time derivatives, probably"
         )
-        print("because the same time output is included in the arrays twice")
+        tools.print_log(
+            "because the same time output is included in the arrays twice"
+        )
         return flag, f
     edot = (ec[:, 1:] - ec[:, :-1]) / dt
     idot = (inc[:, 1:] - inc[:, :-1]) / dt
@@ -860,10 +864,12 @@ def calc_ML_features(
     try:
         adot = (a_short[:, 1:] - a_short[:, :-1]) / dt
     except:
-        print(
+        tools.print_log(
             "problem in calculating the long simulation time derivatives, probably"
         )
-        print("because the same time output is included in the arrays twice")
+        tools.print_log(
+            "because the same time output is included in the arrays twice"
+        )
         return flag, f
 
     edot = (ec_short[:, 1:] - ec_short[:, :-1]) / dt
@@ -1171,8 +1177,8 @@ def run_and_MLclassify_TNO(
     flag = 0
 
     if des is None:
-        print("The designation of the small body must be provided")
-        print("failed at machine_learning.run_and_MLclassify_TNO()")
+        tools.print_log("The designation of the small body must be provided")
+        tools.print_log("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
     if sim is None:
@@ -1188,8 +1194,10 @@ def run_and_MLclassify_TNO(
             )
         )  # type: ignore
         if iflag < 1:
-            print("Failed at simulation initialization stage")
-            print("failed at machine_learning.run_and_MLclassify_TNO()")
+            tools.print_log("Failed at simulation initialization stage")
+            tools.print_log(
+                "failed at machine_learning.run_and_MLclassify_TNO()"
+            )
             return flag, None, sim
 
     flag = 0
@@ -1213,8 +1221,10 @@ def run_and_MLclassify_TNO(
         logfile=logfile,
     )
     if rflag < 1:
-        print("The short integration for the TNO machine learning failed")
-        print("failed at machine_learning.run_and_MLclassify_TNO()")
+        tools.print_log(
+            "The short integration for the TNO machine learning failed"
+        )
+        tools.print_log("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
     # read the short integration
     (
@@ -1230,8 +1240,8 @@ def run_and_MLclassify_TNO(
         des=des, archivefile=archivefile, clones=clones, tmin=tmin, tmax=tmax
     )
     if rflag < 1:
-        print("Unable to read the output for the short integration")
-        print("failed at machine_learning.run_and_MLclassify_TNO()")
+        tools.print_log("Unable to read the output for the short integration")
+        tools.print_log("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
     pomega_short = peri_short + node_short
@@ -1348,16 +1358,16 @@ def run_and_MLclassify_TNO(
         clones=clones,
     )
     if fflag < 1:
-        print("failed to calculate data features")
-        print("failed at machine_learning.run_and_MLclassify_TNO()")
+        tools.print_log("failed to calculate data features")
+        tools.print_log("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
     cflag, classifier, tno_class.classes_dictionary = (
         initialize_TNO_classifier()
     )
     if cflag < 1:
-        print("failed to initialize machine learning classifier")
-        print("failed at machine_learning.run_and_MLclassify_TNO()")
+        tools.print_log("failed to initialize machine learning classifier")
+        tools.print_log("failed at machine_learning.run_and_MLclassify_TNO()")
         return flag, None, sim
 
     # apply the classifier
@@ -1375,19 +1385,19 @@ def run_and_MLclassify_TNO(
 
 def print_TNO_ML_results(pred_class, classes_dictionary, class_probs, clones=2):
     nclas = len(classes_dictionary)
-    print(
+    tools.print_log(
         "Clone number, most probable class, probability of most probable class, ",
         end="",
     )
     for n in range(nclas):
-        print("probability of %s," % classes_dictionary[n], end="")
-    print("\n", end="")
+        tools.print_log("probability of %s," % classes_dictionary[n], end="")
+    tools.print_log("\n", end="")
     format_string = "%d, %s, "
     for n in range(nclas - 1):
         format_string += "%e, "
     format_string += "%e,\n"
     for n in range(0, clones + 1):
-        print(
+        tools.print_log(
             "%d, %s, %e, "
             % (
                 n,
@@ -1397,8 +1407,8 @@ def print_TNO_ML_results(pred_class, classes_dictionary, class_probs, clones=2):
             end="",
         )
         for j in range(nclas):
-            print("%e, " % class_probs[n][j], end="")
-        print("\n", end="")
+            tools.print_log("%e, " % class_probs[n][j], end="")
+        tools.print_log("\n", end="")
 
 
 def print_TNO_ML_results_to_file(
@@ -1925,13 +1935,15 @@ def initialize_TNO_classifier(
         training_file = impresources.files(MLdata) / default_TNO_training_data
 
     if not path.exists(classifier_file) or not path.exists(dict_file):
-        print("The saved classifier file and/or dictionary file do not exist.")
-        print("We will train a classifier using the training file:")
-        print(training_file)
-        print("and save it and the dictionary to:")
-        print(classifier_file)
-        print(dict_file)
-        print(
+        tools.print_log(
+            "The saved classifier file and/or dictionary file do not exist."
+        )
+        tools.print_log("We will train a classifier using the training file:")
+        tools.print_log(training_file)
+        tools.print_log("and save it and the dictionary to:")
+        tools.print_log(classifier_file)
+        tools.print_log(dict_file)
+        tools.print_log(
             "This will take a moment, but future calls will be much much faster"
         )
 
@@ -1943,22 +1955,24 @@ def initialize_TNO_classifier(
         f = TNO_ML_features()
         expected_features = f.feature_names
         if not (expected_features == feature_names):
-            print(
+            tools.print_log(
                 "the features in the specified training set do not match those expected!"
             )
-            print("failed at machine_learning.initialize_TNO_classifier()")
-            print(expected_features)
-            print(feature_names)
+            tools.print_log(
+                "failed at machine_learning.initialize_TNO_classifier()"
+            )
+            tools.print_log(expected_features)
+            tools.print_log(feature_names)
             return flag, None, None
-        print(
+        tools.print_log(
             "the trained classifier has a strict accuracy of %f percent\n"
             % (100 * score)
         )
         if score < 0.95 and default == 1:
-            print(
+            tools.print_log(
                 "The default classifier is less accurate than expected, something isn't right"
             )
-            print("This classifier will not be saved.")
+            tools.print_log("This classifier will not be saved.")
             return flag, clf, classes_dict
 
         # everything looks ok, so we will re-train on all the data and then save things
@@ -1973,7 +1987,7 @@ def initialize_TNO_classifier(
             dict_file=dict_file,
         )
         if sflag == 0:
-            print("Failed to save classifier")
+            tools.print_log("Failed to save classifier")
         flag = 1
 
         return flag, classifier, classes_dictionary
@@ -1982,21 +1996,27 @@ def initialize_TNO_classifier(
             with open(classifier_file, "rb") as f:
                 classifier = load(f)
         except Exception:
-            print("Couldn't read in saved classifier file %s" % classifier_file)
-            print("try deleting the file and trying again")
-            print("failed at machine_learning.initialize_TNO_classifier()")
+            tools.print_log(
+                "Couldn't read in saved classifier file %s" % classifier_file
+            )
+            tools.print_log("try deleting the file and trying again")
+            tools.print_log(
+                "failed at machine_learning.initialize_TNO_classifier()"
+            )
             return flag, None, None
 
         try:
             with open(dict_file, "rb") as f:
                 dictionary = load(f)
         except Exception:
-            print(
+            tools.print_log(
                 "Couldn't read in saved classifier dictionary file %s"
                 % dict_file
             )
-            print("try deleting the file and trying again")
-            print("failed at machine_learning.initialize_TNO_classifier()")
+            tools.print_log("try deleting the file and trying again")
+            tools.print_log(
+                "failed at machine_learning.initialize_TNO_classifier()"
+            )
             return flag, classifier, None
 
         flag = 1
@@ -2032,26 +2052,26 @@ def save_TNO_classifier(
         )
 
     if classifier == None:
-        print("must specify a classifier to save\n")
+        tools.print_log("must specify a classifier to save\n")
         return flag
     if dictionary == None:
-        print("must specify a classifier dictionary to save\n")
+        tools.print_log("must specify a classifier dictionary to save\n")
         return flag
 
     try:
         with open(classifier_file, "wb") as f:
             dump(classifier, f, protocol=5)
     except:
-        print("failed in machine_learning.save_TNO_classifier()\n")
-        print("cannot write the classifier to specified filepath\n")
+        tools.print_log("failed in machine_learning.save_TNO_classifier()\n")
+        tools.print_log("cannot write the classifier to specified filepath\n")
         return flag
 
     try:
         with open(dict_file, "wb") as f:
             dump(dictionary, f)
     except:
-        print("failed in machine_learning.save_TNO_classifier()\n")
-        print("cannot write the dictionary to specified filepath\n")
+        tools.print_log("failed in machine_learning.save_TNO_classifier()\n")
+        tools.print_log("cannot write the dictionary to specified filepath\n")
         return flag
 
     flag = 1

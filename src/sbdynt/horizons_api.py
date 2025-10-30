@@ -1,6 +1,8 @@
 # external modules to be imported
 import json
+import pickle
 import textwrap
+from pathlib import Path
 from pickle import dump
 
 import numpy as np
@@ -9,6 +11,28 @@ from astroquery.jplsbdb import SBDB
 
 # internal modules
 from sbdynt import tools
+
+
+class AbortException(Exception):
+    pass
+
+
+def get_SBDB_query(designation: str | None) -> object | None:
+    if designation is None:
+        return None
+    file = Path(f"data/sbdb_queries/{designation}.pkl")
+    if file.exists():
+        with open(file, "rb") as f:
+            return pickle.load(f)
+
+    obj = SBDB.query(
+        designation, full_precision=True, covariance="mat", phys=True
+    )
+    file.parent.mkdir(parents=True, exist_ok=True)
+    # Write pickle file
+    with open(file, "wb") as f:
+        pickle.dump(obj, f)
+    return obj
 
 
 def query_horizons_planets(obj=None, epoch=2459580.5):
@@ -33,8 +57,8 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     flag = 0
 
     if obj is None:
-        print("A planet name must be provided")
-        print("horizons_api.query_horizons_planets failed")
+        tools.print_log("A planet name must be provided")
+        tools.print_log("horizons_api.query_horizons_planets failed")
         return flag, 0.0, 0.0, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
 
     obj = obj.lower()
@@ -59,8 +83,10 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     try:
         des = str(planet_id[obj])
     except KeyError:
-        print("horizons_api.query_horizons_planets failed")
-        print("KeyError: provided object is not one of the major planets")
+        tools.print_log("horizons_api.query_horizons_planets failed")
+        tools.print_log(
+            "KeyError: provided object is not one of the major planets"
+        )
         raise
 
     # import the following hard-coded constants:
@@ -98,16 +124,18 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
     try:
         data = json.loads(response.text)
     except ValueError:
-        print("horizons_api.query_horizons_planets failed")
-        print("Unable to decode JSON results from Horizons API request")
+        tools.print_log("horizons_api.query_horizons_planets failed")
+        tools.print_log(
+            "Unable to decode JSON results from Horizons API request"
+        )
         return flag, mass, rad, x, v
     # pull the lines we need from the resulting plain text return
     try:
         xvline = data["result"].split("X =")[1].split("\n")
     except:
-        print("horizons_api.query_horizons_planets failed")
-        print('Unable to find "X =" in Horizons API request result:')
-        print(data["result"])
+        tools.print_log("horizons_api.query_horizons_planets failed")
+        tools.print_log('Unable to find "X =" in Horizons API request result:')
+        tools.print_log(data["result"])
         return flag, mass, rad, x, v
 
     try:
@@ -121,8 +149,10 @@ def query_horizons_planets(obj=None, epoch=2459580.5):
         v[1] = float(xvline[1].split("VY=")[1].split()[0]) * 365.25
         v[2] = float(xvline[1].split("VZ=")[1].split()[0]) * 365.25
     except:
-        print("horizons_api.query_horizons_planets failed")
-        print("Unable to find Y,Y,Z, VX, VY, VZ in Horizons API request result")
+        tools.print_log("horizons_api.query_horizons_planets failed")
+        tools.print_log(
+            "Unable to find Y,Y,Z, VX, VY, VZ in Horizons API request result"
+        )
         return flag, mass, rad, x, v
 
     # the query was successful, return the results!
@@ -196,14 +226,18 @@ def query_sb_from_jpl(
         not cloning_method == "find_3_sigma"
         and not cloning_method == "Gaussian"
     ):
-        print("unsupported cloning method!")
-        print("Right now only 'Gaussian' and 'find_3_sigma' are implemented")
-        print("horizons_api.query_sb_from_jpl failed")
+        tools.print_log("unsupported cloning method!")
+        tools.print_log(
+            "Right now only 'Gaussian' and 'find_3_sigma' are implemented"
+        )
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     if find_3_sigma and clones < 2:
-        print("horizons_api.query_sb_from_jpl failed")
-        print("if using cloning_method='find_3_sigma', clones must >= 2")
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
+            "if using cloning_method='find_3_sigma', clones must >= 2"
+        )
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     if logfile == True:
@@ -216,13 +250,14 @@ def query_sb_from_jpl(
     try:
         # query the JPL small body database browser for the best-fit
         # orbit and associated covariance matrix
-        obj = SBDB.query(pdes, full_precision=True, covariance="mat", phys=True)
-    except:
-        print("horizons_api.query_sb_from_jpl failed")
-        print(
+        obj = get_SBDB_query(pdes)
+        # raise AbortException()
+    except Exception:
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
             "first attempted JPL small body database browser query failed, returning:"
         )
-        print(obj)
+        tools.print_log(obj)
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     # some objects can't be found with their packed designation,
@@ -238,15 +273,13 @@ def query_sb_from_jpl(
         try:
             # query the JPL small body database browser for the best-fit
             # orbit and associated covariance matrix
-            obj = SBDB.query(
-                des, full_precision=True, covariance="mat", phys=True
-            )
+            obj = get_SBDB_query(des)
         except:
-            print("horizons_api.query_sb_from_jpl failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_jpl failed")
+            tools.print_log(
                 "second attempted JPL small body database browser query failed, returning:"
             )
-            print(obj)
+            tools.print_log(obj)
             return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     # check to see if the user-provided designation is the same type as the primary one
@@ -260,18 +293,16 @@ def query_sb_from_jpl(
     if sbdbdestype != destype:
         try:
             newdes = obj["object"]["des"]
-            obj = SBDB.query(
-                newdes, full_precision=True, covariance="mat", phys=True
-            )
+            obj = get_SBDB_query(newdes)
         except:
-            print("horizons_api.query_sb_from_jpl failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_jpl failed")
+            tools.print_log(
                 "The user-provided designation was not the most up to date designation"
             )
-            print(
+            tools.print_log(
                 "third attempted JPL small body database browser query failed, returning:"
             )
-            print(obj)
+            tools.print_log(obj)
             return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     # save the SBDB query results using pickle if that's desired
@@ -288,8 +319,8 @@ def query_sb_from_jpl(
             with open(orbit_file, "wb") as f:
                 dump(obj, f)
         except:
-            print("unable to write the SBDB query to a file")
-            print("tried to write to %s" % orbit_file)
+            tools.print_log("unable to write the SBDB query to a file")
+            tools.print_log("tried to write to %s" % orbit_file)
             return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         if logfile:
             logmessage = "SBDB query results saved to " + orbit_file + "\n"
@@ -322,23 +353,23 @@ def query_sb_from_jpl(
                 cepoch = 0.0
             oepoch = np.float64(str(obj["orbit"]["epoch"]).split()[0])
             if cepoch != oepoch and clones > 0 and cepoch != 0.0:
-                print("horizons_api.query_sb_from_jpl failed")
+                tools.print_log("horizons_api.query_sb_from_jpl failed")
                 warningstring = (
                     "JPL small body database browser query did not"
                     + "return a best fit orbit at the same epoch as "
                     + "the covariance matrix. Query Failed."
                 )
-                print(textwrap.fill(warningstring, 80))
+                tools.print_log(textwrap.fill(warningstring, 80))
             if cepoch != oepoch and clones > 0 and cepoch == 0.0:
                 return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-                print("horizons_api.query_sb_from_jpl failed")
+                tools.print_log("horizons_api.query_sb_from_jpl failed")
                 warningstring = (
                     "JPL small body database browser query did not "
                     + "return the expected data for the orbit and "
                     + "covariance matrix"
                 )
-                print(textwrap.fill(warningstring, 80))
-                print(obj)
+                tools.print_log(textwrap.fill(warningstring, 80))
+                tools.print_log(obj)
                 return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
             arc = np.float64(str(obj["orbit"]["data_arc"].split()[0]))
@@ -352,14 +383,14 @@ def query_sb_from_jpl(
                     + "This best-fit orbit will still be run, but "
                     + "the results should be used with caution"
                 )
-                print(textwrap.fill(warningstring, 80))
+                tools.print_log(textwrap.fill(warningstring, 80))
                 flag = 2
                 if logfile:
                     logmessage = "best-fit-orbit has a <30 day arc!\n"
                     tools.writelog(logfile, logmessage)
 
             elif arc < 30.0:
-                print("horizons_api.query_sb_from_jpl failed")
+                tools.print_log("horizons_api.query_sb_from_jpl failed")
                 warningstring = (
                     "WARNING!!! The object's observational arc is "
                     + "less than 30 days which probably means the "
@@ -370,7 +401,7 @@ def query_sb_from_jpl(
                     + "clones=0 and even then he results should be "
                     + "used with caution."
                 )
-                print(textwrap.fill(warningstring, 80))
+                tools.print_log(textwrap.fill(warningstring, 80))
                 return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
             # no clones, so we can just use the other best-fit orbit instead
             epoch = oepoch
@@ -382,19 +413,21 @@ def query_sb_from_jpl(
             bfargperi = np.float64(str(objorbit["w"]).split()[0])
             bftp = np.float64(str(objorbit["tp"]).split()[0])
         except:
-            print("horizons_api.query_sb_from_jpl failed")
+            tools.print_log("horizons_api.query_sb_from_jpl failed")
             warningstring = (
                 "JPL small body database browser query did not "
                 + "return the expected data for the orbit and/or "
                 + "covariance matrix"
             )
-            print(textwrap.fill(warningstring, 80))
-            print(obj)
+            tools.print_log(textwrap.fill(warningstring, 80))
+            tools.print_log(obj)
             return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     if bfecc >= 1.0 or bfecc < 0.0:
-        print("horizons_api.query_sb_from_jpl failed")
-        print("orbital eccentricity not between 0 and 1, cannot proceed")
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
+            "orbital eccentricity not between 0 and 1, cannot proceed"
+        )
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     # We have to query JPL horizons to find out what exact value of GM
@@ -431,8 +464,10 @@ def query_sb_from_jpl(
     try:
         data = json.loads(response.text)
     except ValueError:
-        print("horizons_api.query_sb_from_jpl failed")
-        print("Unable to decode JSON results from Horizons API request")
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
+            "Unable to decode JSON results from Horizons API request"
+        )
         flag = 0
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
@@ -441,9 +476,11 @@ def query_sb_from_jpl(
         gmpart = data["result"].split("Keplerian GM")[1]
         gm = np.float64(gmpart.split("\n")[0].split()[1])
     except:
-        print("horizons_api.query_sb_from_jpl failed")
-        print("\nunable to pull the GM value from the horizons results:\n")
-        print(data["result"])
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
+            "\nunable to pull the GM value from the horizons results:\n"
+        )
+        tools.print_log(data["result"])
         flag = 0
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
@@ -460,8 +497,10 @@ def query_sb_from_jpl(
         GM=gm, a=a0, e=bfecc, inc=i0, node=O0, argperi=w0, ma=ma0
     )
     if i < 1:
-        print("horizons_api.query_sb_from_jpl failed")
-        print("failed to convert to cartesian inside query_sb_from_jpl")
+        tools.print_log("horizons_api.query_sb_from_jpl failed")
+        tools.print_log(
+            "failed to convert to cartesian inside query_sb_from_jpl"
+        )
         flag = 0
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
@@ -566,8 +605,8 @@ def query_sb_from_jpl(
                 )
             )
             if i < 1:
-                print("horizons_api.query_sb_from_jpl failed")
-                print(
+                tools.print_log("horizons_api.query_sb_from_jpl failed")
+                tools.print_log(
                     "failed to convert to cartesian "
                     + "inside cloning part of query_sb_from_jpl"
                 )
@@ -616,8 +655,10 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
     flag = 0
 
     if des == None:
-        print("The designation of one or more small bodies must be provided")
-        print("failed in horizons_api.query_sb_from_horizons()")
+        tools.print_log(
+            "The designation of one or more small bodies must be provided"
+        )
+        tools.print_log("failed in horizons_api.query_sb_from_horizons()")
         return flag, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     # if the user provided just a single string as the designation
@@ -676,8 +717,8 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
         try:
             data = json.loads(response.text)
         except ValueError:
-            print("horizons_api.query_sb_from_horizons failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_horizons failed")
+            tools.print_log(
                 "Unable to decode JSON results from Horizons API request for %s"
                 % (des[n])
             )
@@ -686,8 +727,8 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
         try:
             data = json.loads(response.text)
         except ValueError:
-            print("horizons_api.query_sb_from_horizons failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_horizons failed")
+            tools.print_log(
                 "Unable to decode JSON results from Horizons API request for %s"
                 % (des[n])
             )
@@ -697,12 +738,12 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
         try:
             xvline = data["result"].split("X =")[1].split("\n")
         except:
-            print("horizons_api.query_sb_from_horizons failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_horizons failed")
+            tools.print_log(
                 'Unable to find "X =" in Horizons API request result for %s:'
                 % (des[n])
             )
-            print(data["result"])
+            tools.print_log(data["result"])
             return flag, x, y, z, vx, vy, vz
 
         try:
@@ -716,8 +757,8 @@ def query_sb_from_horizons(des=None, epoch=2459580.5):
             vy[n] = float(xvline[1].split("VY=")[1].split()[0]) * 365.25
             vz[n] = float(xvline[1].split("VZ=")[1].split()[0]) * 365.25
         except:
-            print("horizons_api.query_sb_from_horizons failed")
-            print(
+            tools.print_log("horizons_api.query_sb_from_horizons failed")
+            tools.print_log(
                 "Unable to find Y,Y,Z, VX, VY, VZ in Horizons API "
                 "request result for %s" % (des[n])
             )

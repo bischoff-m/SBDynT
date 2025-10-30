@@ -49,8 +49,10 @@ def initialize_from_heliocentric_Find_Orb_orbit(
 
     sim = rebound.Simulation()
     if des == None:
-        print("add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed")
-        print(
+        tools.print_log(
+            "add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed"
+        )
+        tools.print_log(
             "you must provide a designation (used to label the particle within rebound)"
         )
         return 0, sim
@@ -68,11 +70,13 @@ def initialize_from_heliocentric_Find_Orb_orbit(
     if clones == None:
         clones = ntp_avail - 1
     elif clones > ntp_avail - 1:
-        print("add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed")
-        print(
+        tools.print_log(
+            "add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed"
+        )
+        tools.print_log(
             "the number of clones specified is more than than the length of orbital"
         )
-        print("element arrays that were provided.")
+        tools.print_log("element arrays that were provided.")
         return 0, sim
 
     # make sure planets is a list and make all planet names lowercase
@@ -108,7 +112,7 @@ def initialize_from_heliocentric_Find_Orb_orbit(
         sim, planets=planets, epoch=epoch
     )
     if apflag < 1:
-        print(
+        tools.print_log(
             "add_orbits.initialize_from_heliocentric_Find_Orb_orbit failed at run_reb.add_planets"
         )
         return 0, sim

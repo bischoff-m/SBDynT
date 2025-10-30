@@ -63,11 +63,13 @@ def plot_aei(
         try:
             temp = len(a.shape)
         except:
-            print(
+            tools.print_log(
                 "You must either pass orbital element arrays (a,e,i and time)"
             )
-            print("or a designation to this routine to generate plots")
-            print("failed at plotting_scripts.plot_aei()")
+            tools.print_log(
+                "or a designation to this routine to generate plots"
+            )
+            tools.print_log("failed at plotting_scripts.plot_aei()")
             return flag, None
     else:
         try:
@@ -83,11 +85,11 @@ def plot_aei(
                 clones=clones,
             )
             if rflag < 1:
-                print(
+                tools.print_log(
                     "Could not generate arrays (a,e,i and time) for the provided"
                 )
-                print("designation and/or archivefile")
-                print("failed at plotting_scripts.plot_aei()")
+                tools.print_log("designation and/or archivefile")
+                tools.print_log("failed at plotting_scripts.plot_aei()")
                 return flag, None
 
     if len(a.shape) < 2:
@@ -95,9 +97,15 @@ def plot_aei(
         if clones == None:
             clones = 0
         if clones > 0:
-            print("warning! plotting_scripts.plot_aei() was asked to plot")
-            print("clones, but there are no clones in the archive file or")
-            print("the provided arrays. Only the best fit will be plotted")
+            tools.print_log(
+                "warning! plotting_scripts.plot_aei() was asked to plot"
+            )
+            tools.print_log(
+                "clones, but there are no clones in the archive file or"
+            )
+            tools.print_log(
+                "the provided arrays. Only the best fit will be plotted"
+            )
             clones = 0
             flag = 2
         ntp = 1
@@ -243,13 +251,13 @@ def calc_and_plot_rotating_frame(
     flag = 0
 
     if des == None:
-        print("You must pass a designation to this function")
-        print("plotting_scripts.calc_and_plot_rotating_frame failed")
+        tools.print_log("You must pass a designation to this function")
+        tools.print_log("plotting_scripts.calc_and_plot_rotating_frame failed")
         return flag, None
 
     if planet == None:
-        print("You must pass a planet name to this function")
-        print("plotting_scripts.calc_and_plot_rotating_frame failed")
+        tools.print_log("You must pass a planet name to this function")
+        tools.print_log("plotting_scripts.calc_and_plot_rotating_frame failed")
         return flag, None
 
     if archivefile == None:
@@ -268,8 +276,10 @@ def calc_and_plot_rotating_frame(
     )
 
     if rflag < 1:
-        print("plotting_scripts.calc_and_plot_rotating_frame failed")
-        print("couldn't get the rotating frame positions for the small body")
+        tools.print_log("plotting_scripts.calc_and_plot_rotating_frame failed")
+        tools.print_log(
+            "couldn't get the rotating frame positions for the small body"
+        )
         return flag, None
     # calculate the rotating frame values for the planet
     rflag, pxr, pyr, pzr, pvxr, pvyr, pvzr, t = tools.calc_rotating_frame(
@@ -282,8 +292,10 @@ def calc_and_plot_rotating_frame(
     )
 
     if rflag < 1:
-        print("plotting_scripts.calc_and_plot_rotating_frame failed")
-        print("couldn't get the rotating frame positions for the planet")
+        tools.print_log("plotting_scripts.calc_and_plot_rotating_frame failed")
+        tools.print_log(
+            "couldn't get the rotating frame positions for the planet"
+        )
         return flag, None
 
     if len(xr.shape) < 2:
@@ -291,9 +303,15 @@ def calc_and_plot_rotating_frame(
         if clones == None:
             clones = 0
         if clones > 0:
-            print("warning! plotting_scripts.plot_aei() was asked to plot")
-            print("clones, but there are no clones in the archive file or")
-            print("the provided arrays. Only the best fit will be plotted")
+            tools.print_log(
+                "warning! plotting_scripts.plot_aei() was asked to plot"
+            )
+            tools.print_log(
+                "clones, but there are no clones in the archive file or"
+            )
+            tools.print_log(
+                "the provided arrays. Only the best fit will be plotted"
+            )
             clones = 0
             flag = 2
         ntp = 1

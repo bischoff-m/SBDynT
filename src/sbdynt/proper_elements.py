@@ -55,9 +55,11 @@ class proper_elements:
             self.time = np.zeros(nout)
 
     def print_results(self):
-        print("Clone number, proper a, proper e, proper sini:\n")
+        tools.print_log("Clone number, proper a, proper e, proper sini:\n")
         for n in range(0, self.clones + 1):
-            print("%d, %e, %e, %e" % (n, self.a[n], self.e[n], self.sini[n]))
+            tools.print_log(
+                "%d, %e, %e, %e" % (n, self.a[n], self.e[n], self.sini[n])
+            )
 
 
 class planet_frequencies:
@@ -92,8 +94,8 @@ def calc_proper_elements(
     flag = 0
 
     if des is None:
-        print("The designation of the small body must be provided")
-        print("failed at proper_elements.calc_proper_elements()")
+        tools.print_log("The designation of the small body must be provided")
+        tools.print_log("failed at proper_elements.calc_proper_elements()")
         return flag, None
 
     if archivefile is None:
@@ -119,7 +121,7 @@ def calc_proper_elements(
     )
 
     if sflag < 1:
-        print(
+        tools.print_log(
             "proper_elements.calc_proper_elements failed when reading the small body data"
         )
         return flag, None
@@ -128,7 +130,7 @@ def calc_proper_elements(
     n = len(t)
     elements = proper_elements(clones, timeseries=return_timeseries, nout=n)
     if n < 1000:
-        print(
+        tools.print_log(
             "proper_elements.calc_proper_elements stopped because there are too few data points"
         )
         return flag, elements
@@ -191,7 +193,7 @@ def calc_proper_elements(
             archivefile, planets, tmax=tmax, tmin=tmin
         )
         if fflag < 1:
-            print(
+            tools.print_log(
                 "proper_elements.calc_proper_elements failed when calculating planet frequencies"
             )
             return flag, None
@@ -206,9 +208,9 @@ def calc_proper_elements(
                 with open(freq_file, "wb") as f:
                     dump(planet_freqs, f, protocol=5)
             except:
-                print("couldn't write the save-file")
+                tools.print_log("couldn't write the save-file")
         else:
-            print(
+            tools.print_log(
                 "proper_elements.calc_proper_elements failed when calculating planet frequencies"
             )
             return flag, None
@@ -218,13 +220,13 @@ def calc_proper_elements(
             with open(freq_file, "rb") as f:
                 planet_freqs = load(f)
         except:
-            print("couldn't read the saved filter file")
-            print("will calculate the frequencies instead")
+            tools.print_log("couldn't read the saved filter file")
+            tools.print_log("will calculate the frequencies instead")
             fflag, planet_freqs = calc_planet_frequencies(
                 archivefile, planets, tmax=tmax, tmin=tmin
             )
             if fflag < 1:
-                print(
+                tools.print_log(
                     "proper_elements.calc_proper_elements failed when calculating planet frequencies"
                 )
                 return flag, None
@@ -241,10 +243,10 @@ def calc_proper_elements(
     freq = np.fft.fftfreq(n, d=dt_mean)
     freqn = np.fft.rfftfreq(n, d=dt_mean)
     if not (freq == planet_freqs.freq).all():
-        print(
+        tools.print_log(
             "proper_elements.calc_proper_elements failed because the small body and planet data"
         )
-        print("aren't sampled at the same delta t")
+        tools.print_log("aren't sampled at the same delta t")
         return flag, elements
 
     # disregard anything with a period shorter than 2000 years for asteroids or 5000 years for other objects
@@ -317,7 +319,7 @@ def calc_proper_elements(
                     g = g2
                     gind = gind2
         except:
-            print("warning, Jupiter not in planet list")
+            tools.print_log("warning, Jupiter not in planet list")
 
         try:
             if np.abs(g - planet_freqs.g6) / np.abs(planet_freqs.g6) <= 0.01:
@@ -341,7 +343,7 @@ def calc_proper_elements(
                     s = s2
                     sind = sind2
         except:
-            print("warning, Saturn not in planet list")
+            tools.print_log("warning, Saturn not in planet list")
 
         try:
             if np.abs(g - planet_freqs.g7) / np.abs(planet_freqs.g7) <= 0.01:
@@ -365,7 +367,7 @@ def calc_proper_elements(
                     s = s2
                     sind = sind2
         except:
-            print("warning, Uranus not in planet list")
+            tools.print_log("warning, Uranus not in planet list")
 
         try:
             if np.abs(g - planet_freqs.g8) / np.abs(planet_freqs.g8) <= 0.01:
@@ -389,7 +391,7 @@ def calc_proper_elements(
                     s = s2
                     sind = sind2
         except:
-            print("warning, Neptune not in planet list")
+            tools.print_log("warning, Neptune not in planet list")
 
         elements.g[j] = g
         elements.s[j] = s
@@ -699,27 +701,35 @@ def read_sbody_for_proper_elements(
     flag = 0
 
     if des == None:
-        print("must provide designation")
-        print("failed at proper_elements.read_sbody_for_proper_elements()")
+        tools.print_log("must provide designation")
+        tools.print_log(
+            "failed at proper_elements.read_sbody_for_proper_elements()"
+        )
         return flag, None, None, None, None, None, None, None, None
 
     if archivefile == None:
-        print("must provide archive file path")
-        print("failed at proper_elements.read_sbody_for_proper_elements()")
+        tools.print_log("must provide archive file path")
+        tools.print_log(
+            "failed at proper_elements.read_sbody_for_proper_elements()"
+        )
         return flag, None, None, None, None, None, None, None, None
 
     try:
         sa = rebound.Simulationarchive(archivefile)
     except:
-        print("couldn't load archive file")
-        print("failed at proper_elements.read_sbody_for_proper_elements()")
+        tools.print_log("couldn't load archive file")
+        tools.print_log(
+            "failed at proper_elements.read_sbody_for_proper_elements()"
+        )
         return flag, None, None, None, None, None, None, None, None
 
     try:
         tp = sa[0].particles[des]
     except:
-        print("couldn't find des in the archive file")
-        print("failed at proper_elements.read_sbody_for_proper_elements()")
+        tools.print_log("couldn't find des in the archive file")
+        tools.print_log(
+            "failed at proper_elements.read_sbody_for_proper_elements()"
+        )
         return flag, None, None, None, None, None, None, None, None
 
     com = sa[0].com()
@@ -745,8 +755,12 @@ def read_sbody_for_proper_elements(
         dt = tt[2] - tt[1]
         nout = len(tt)
         if dt > 55.0 or dt < 45.0 or nout < 9.9e3 or nout > 1.01e4:
-            print("unexpected sampling in the first 0.5 Myr of the default")
-            print("failed at proper_elements.read_sbody_for_proper_elements()")
+            tools.print_log(
+                "unexpected sampling in the first 0.5 Myr of the default"
+            )
+            tools.print_log(
+                "failed at proper_elements.read_sbody_for_proper_elements()"
+            )
             return flag, None, None, None, None, None, None, None, None
 
         # see how many particles and outputs we got back
@@ -755,13 +769,13 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print(
+                tools.print_log(
                     "warning! proper_elements.calc_proper_elements() was asked to "
                 )
-                print(
+                tools.print_log(
                     "use clones, but there are no clones in the archive file!"
                 )
-                print("Only the best fit will be analyzed")
+                tools.print_log("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
             ntp = 1
@@ -800,10 +814,12 @@ def read_sbody_for_proper_elements(
         dt = tp2[2] - tp2[1]
         nout = len(tp2)
         if dt > 1005.0 or dt < 995.0 or nout < 4.94e4 or nout > 4.96e4:
-            print(
+            tools.print_log(
                 "unexpected sampling from 0.5-50 Myr of the default TNO integration"
             )
-            print("failed at proper_elements.read_sbody_for_proper_elements()")
+            tools.print_log(
+                "failed at proper_elements.read_sbody_for_proper_elements()"
+            )
             return flag, None, None, None, None, None, None, None, None
 
         if clones == 0:
@@ -834,10 +850,12 @@ def read_sbody_for_proper_elements(
         nout = len(tt)
 
         if dt > 1005.0 or dt < 995.0 or nout < 4.99e4 or nout > 5.01e4:
-            print(
+            tools.print_log(
                 "unexpected sampling from negative 50 Myr of the default tno integration"
             )
-            print("failed at proper_elements.read_sbody_for_proper_elements()")
+            tools.print_log(
+                "failed at proper_elements.read_sbody_for_proper_elements()"
+            )
             return flag, None, None, None, None, None, None, None, None
 
         # re-order the arrays so time goes in a positive direction
@@ -871,10 +889,12 @@ def read_sbody_for_proper_elements(
         dt = tp[2] - tp[1]
         nout = len(tp)
         if dt > 505.0 or dt < 495.0 or nout < 9.9e3 or nout > 1.01e4:
-            print(
+            tools.print_log(
                 "unexpected sampling in the first 5 Myr of the default asteroid integration"
             )
-            print("failed at proper_elements.read_sbody_for_proper_elements()")
+            tools.print_log(
+                "failed at proper_elements.read_sbody_for_proper_elements()"
+            )
             return flag, None, None, None, None, None, None, None, None
 
         # see how many particles and outputs we got back
@@ -883,13 +903,13 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print(
+                tools.print_log(
                     "warning! proper_elements.calc_proper_elements() was asked to "
                 )
-                print(
+                tools.print_log(
                     "use clones, but there are no clones in the archive file!"
                 )
-                print("Only the best fit will be analyzed")
+                tools.print_log("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
             ntp = 1
@@ -926,10 +946,12 @@ def read_sbody_for_proper_elements(
         dt = np.abs(tt[2] - tt[1])
         nout = len(tt)
         if dt > 505.0 or dt < 495.0 or nout < 9.9e3 or nout > 1.01e4:
-            print(
+            tools.print_log(
                 "unexpected sampling in the backwards 5 Myr of the default asteroid integration"
             )
-            print("failed at proper_elements.read_sbody_for_proper_elements()")
+            tools.print_log(
+                "failed at proper_elements.read_sbody_for_proper_elements()"
+            )
             return flag, None, None, None, None, None, None, None, None
 
         if clones == 0:
@@ -968,13 +990,13 @@ def read_sbody_for_proper_elements(
             if clones == None:
                 clones = 0
             if clones > 0:
-                print(
+                tools.print_log(
                     "warning! proper_elements.calc_proper_elements() was asked to "
                 )
-                print(
+                tools.print_log(
                     "use clones, but there are no clones in the archive file!"
                 )
-                print("Only the best fit will be analyzed")
+                tools.print_log("Only the best fit will be analyzed")
                 clones = 0
                 flag = 2
             ntp = 1
@@ -1005,9 +1027,15 @@ def read_sbody_for_proper_elements(
     dt_std = np.std(dt)
     dt_mean = np.mean(dt)
     if dt_std > 0.005 * dt_mean:
-        print("The time series provided is not appropriately evenly sampled")
-        print("the time between outputs must be constant for FFT analysis")
-        print("failed at proper_elements.read_sbody_for_proper_elements()")
+        tools.print_log(
+            "The time series provided is not appropriately evenly sampled"
+        )
+        tools.print_log(
+            "the time between outputs must be constant for FFT analysis"
+        )
+        tools.print_log(
+            "failed at proper_elements.read_sbody_for_proper_elements()"
+        )
         return flag, None, None, None, None, None, None, None, None
 
     h = ec * np.sin(lperi)
@@ -1067,8 +1095,10 @@ def calc_planet_frequencies(
             dt = tt[1] - tt[0]
             nout = len(tt)
             if dt > 55.0 or dt < 45.0 or nout < 9.9e3 or nout > 1.01e4:
-                print("unexpected sampling in the first 0.5 Myr of the default")
-                print(
+                tools.print_log(
+                    "unexpected sampling in the first 0.5 Myr of the default"
+                )
+                tools.print_log(
                     "tno integration. failed at proper_elements.calc_planet_frequencies())"
                 )
                 return flag, None
@@ -1088,8 +1118,10 @@ def calc_planet_frequencies(
             dt = tp2[2] - tp2[1]
             nout = len(tp2)
             if dt > 1005.0 or dt < 995.0 or nout < 4.94e4 or nout > 4.96e4:
-                print("unexpected sampling from 0.5-50 Myr of the default")
-                print(
+                tools.print_log(
+                    "unexpected sampling from 0.5-50 Myr of the default"
+                )
+                tools.print_log(
                     "tno integration. failed at proper_elements.calc_planet_frequencies())"
                 )
                 return flag, None
@@ -1123,8 +1155,10 @@ def calc_planet_frequencies(
             dt = tp[1] - tp[0]
             nout = len(tp)
             if dt > 505.0 or dt < 495.0 or nout < 9.9e3 or nout > 1.01e4:
-                print("unexpected sampling in the first 5 Myr of the default")
-                print(
+                tools.print_log(
+                    "unexpected sampling in the first 5 Myr of the default"
+                )
+                tools.print_log(
                     "asteroid integration. failed at proper_elements.calc_planet_frequencies()"
                 )
                 return flag, None
@@ -1137,10 +1171,10 @@ def calc_planet_frequencies(
             dt = np.abs(tt[2] - tt[1])
             nout = len(tt)
             if dt > 505.0 or dt < 495.0 or nout < 9.9e3 or nout > 1.01e4:
-                print(
+                tools.print_log(
                     "unexpected sampling in the backwards 5 Myr of the default"
                 )
-                print(
+                tools.print_log(
                     "asteroid integration. failed at proper_elements.calc_planet_frequencies()"
                 )
                 return flag, None
@@ -1175,11 +1209,15 @@ def calc_planet_frequencies(
         dt_std = np.std(dt)
         dt_mean = np.mean(dt)
         if dt_std > 0.005 * dt_mean:
-            print(
+            tools.print_log(
                 "The time series provided is not appropriately evenly sampled"
             )
-            print("the time between outputs must be constant for FFT analysis")
-            print("failed at proper_elements.calc_planet_frequencies()")
+            tools.print_log(
+                "the time between outputs must be constant for FFT analysis"
+            )
+            tools.print_log(
+                "failed at proper_elements.calc_planet_frequencies()"
+            )
             return flag, None
 
         # run fft analyses to find the dominant frequencies
@@ -1265,11 +1303,11 @@ def calc_filter_frequencies(planet_freqs, g, s):
         and planet_freqs.g7
         and planet_freqs.g8
     ):
-        print(
+        tools.print_log(
             "current proper elements implementation requires all four giant planets to"
         )
-        print("be in the simulation!")
-        print("failed at proper_elements.calc_filter_frequencies()")
+        tools.print_log("be in the simulation!")
+        tools.print_log("failed at proper_elements.calc_filter_frequencies()")
         return flag, None, None, None, None
 
     g5 = planet_freqs.g5

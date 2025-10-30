@@ -57,7 +57,7 @@ def run_tno(
     documentation here...
     """
     if des == None:
-        print("The designation of a TNO must be provided")
+        tools.print_log("The designation of a TNO must be provided")
         return None
 
     if logfile is True:
@@ -83,7 +83,7 @@ def run_tno(
     )
 
     if iflag < 1:
-        print("Failed at initialization stage")
+        tools.print_log("Failed at initialization stage")
         return None
 
     object_type = "tno"
@@ -116,7 +116,7 @@ def run_tno(
     )
 
     if cflag < 1:
-        print("Failed at the machine learning stage")
+        tools.print_log("Failed at the machine learning stage")
         return tno_results
 
     if logf == "screen":
@@ -153,7 +153,7 @@ def run_tno(
             tout=1000,
         )
         if rflag < 1:
-            print("Failed at additional forward integration stage")
+            tools.print_log("Failed at additional forward integration stage")
             return tno_results
 
         if logf:
@@ -167,7 +167,7 @@ def run_tno(
             sa = rebound.Simulationarchive(icfile)
             sim2 = sa[0]
         except Exception:
-            print(
+            tools.print_log(
                 "failed to read in the saved initial conditions file to restart from t=0"
             )
             return tno_results
@@ -182,7 +182,7 @@ def run_tno(
             tout=1000,
         )
         if rflag < 1:
-            print("Failed at backward integration stage")
+            tools.print_log("Failed at backward integration stage")
             return tno_results
 
         if logf:
@@ -199,7 +199,7 @@ def run_tno(
         )
 
         if pflag < 1:
-            print("Failed at proper elements calculation stage")
+            tools.print_log("Failed at proper elements calculation stage")
             return tno_results
 
         tno_results.proper_elements = pe

@@ -29,9 +29,11 @@ def add_planets(sim, planets=["all"], epoch=2459580.5):
 
     # check to see if the sim already has particles in it
     if sim.N > 0:
-        print("run_reb.add_planets failed")
-        print("This rebound simulation instance already has particles in it!")
-        print(
+        tools.print_log("run_reb.add_planets failed")
+        tools.print_log(
+            "This rebound simulation instance already has particles in it!"
+        )
+        tools.print_log(
             "run_reb.add_planets can only accept an empty rebound simulation instance"
         )
         return flag, sim, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
@@ -135,7 +137,7 @@ def add_planets(sim, planets=["all"], epoch=2459580.5):
                 horizons_api.query_horizons_planets(obj=pl, epoch=epoch)
             )
             if pflag < 1:
-                print(
+                tools.print_log(
                     "run_reb.add_planets failed at \
                     horizons_api.query_horizons_planets for ",
                     pl,
@@ -162,7 +164,7 @@ def add_planets(sim, planets=["all"], epoch=2459580.5):
             horizons_api.query_horizons_planets(obj=pl, epoch=epoch)
         )
         if pflag < 1:
-            print(
+            tools.print_log(
                 "run_reb.add_planets failed failed at \
                   horizons_api.query_horizons_planets for ",
                 pl,
@@ -238,8 +240,8 @@ def initialize_simulation(
     epoch = None
 
     if des is None:
-        print("The designation of the small body must be provided")
-        print("failed in horizons_api.initialize_simulation()")
+        tools.print_log("The designation of the small body must be provided")
+        tools.print_log("failed in horizons_api.initialize_simulation()")
         return flag, epoch, sim
 
     if logfile is True:
@@ -290,7 +292,7 @@ def initialize_simulation(
         )
     )
     if sflag < 1:
-        print(
+        tools.print_log(
             "run_reb.initialize_simulation failed at horizons_api.query_sb_from_jpl"
         )
         return flag, 0.0, sim
@@ -305,7 +307,9 @@ def initialize_simulation(
         sim, planets=planets, epoch=epoch
     )
     if apflag < 1:
-        print("run_reb.initialize_simulation failed at run_reb.add_planets")
+        tools.print_log(
+            "run_reb.initialize_simulation failed at run_reb.add_planets"
+        )
         return flag, 0.0, sim
 
     if clones > 0:
@@ -405,8 +409,10 @@ def initialize_simulation_at_epoch(
     flag = 0
 
     if des is None:
-        print("The designation of one or more small bodies must be provided")
-        print("failed in run_reb.initialize_simulation_at_epoch()")
+        tools.print_log(
+            "The designation of one or more small bodies must be provided"
+        )
+        tools.print_log("failed in run_reb.initialize_simulation_at_epoch()")
         return flag, 0.0, None
 
     if logfile is True:
@@ -458,7 +464,7 @@ def initialize_simulation_at_epoch(
         des=des, epoch=epoch
     )
     if flag < 1:
-        print(
+        tools.print_log(
             "run_reb.initialize_simulation_at_epoch failed at "
             "horizons_api.query_sb_from_horizons"
         )
@@ -470,7 +476,7 @@ def initialize_simulation_at_epoch(
         sim, planets=planets, epoch=epoch
     )
     if apflag < 1:
-        print(
+        tools.print_log(
             "run_reb.initialize_simulation_at_epoch failed at run_reb.add_planets"
         )
         return flag, 0.0, sim
@@ -564,11 +570,13 @@ def run_simulation(
     flag = 0
     if archivefile == None:
         if des == None:
-            print(
+            tools.print_log(
                 "You must provide either an archivefile name or a designation "
             )
-            print("that can be used to generate a default archivefile name")
-            print("failed at run_reb.run_simulation")
+            tools.print_log(
+                "that can be used to generate a default archivefile name"
+            )
+            tools.print_log("failed at run_reb.run_simulation")
             return flag, sim
         archivefile = tools.archive_file_name(des)
 
@@ -577,13 +585,13 @@ def run_simulation(
 
     if logfile is True:
         if des is None:
-            print(
+            tools.print_log(
                 "You must provide either a logfile name (or logfile='screen') or "
             )
-            print(
+            tools.print_log(
                 "a designation that can be used to generate a default logfile name"
             )
-            print("failed at run_reb.run_simulation")
+            tools.print_log("failed at run_reb.run_simulation")
             return flag, sim
         logfile = tools.log_file_name(des=des)
     if datadir and logfile and logfile != "screen":
@@ -600,7 +608,7 @@ def run_simulation(
     elif integrator == "ias15":
         sim.integrator = "ias15"
     else:
-        print(
+        tools.print_log(
             "chosen integrator type not currently supported here \
                     options are whfast, mercurius, ias15"
         )
@@ -673,8 +681,10 @@ def initialize_simulation_from_simarchive(
     flag = 0
 
     if des is None:
-        print("The designation of one or more small bodies must be provided")
-        print("run_reb.initialize_simulation_from_simarchive failed")
+        tools.print_log(
+            "The designation of one or more small bodies must be provided"
+        )
+        tools.print_log("run_reb.initialize_simulation_from_simarchive failed")
         return flag, None, 0
 
     if logfile == True:
@@ -700,12 +710,14 @@ def initialize_simulation_from_simarchive(
             try:
                 sim = rebound.Simulation(archivefile2)
             except RuntimeError:
-                print("run_reb.initialize_simulation_from_simarchive failed")
-                print(
+                tools.print_log(
+                    "run_reb.initialize_simulation_from_simarchive failed"
+                )
+                tools.print_log(
                     "couldn't read the simulation archive file from either default: "
                 )
-                print(archivefile)
-                print(archivefile2)
+                tools.print_log(archivefile)
+                tools.print_log(archivefile2)
                 return flag, None, 0
 
     else:
@@ -715,9 +727,11 @@ def initialize_simulation_from_simarchive(
         try:
             sim = rebound.Simulation(archivefile)
         except RuntimeError:
-            print("run_reb.initialize_simulation_from_simarchive failed")
-            print("couldn't read the simulation archive file: ")
-            print(archivefile)
+            tools.print_log(
+                "run_reb.initialize_simulation_from_simarchive failed"
+            )
+            tools.print_log("couldn't read the simulation archive file: ")
+            tools.print_log(archivefile)
             return flag, None, 0
 
     if logfile:
@@ -741,16 +755,20 @@ def initialize_simulation_from_simarchive(
             try:
                 p = sim.particles[str(d)]
             except:
-                print("failed to find the following object in the simulation:")
-                print(str(d))
+                tools.print_log(
+                    "failed to find the following object in the simulation:"
+                )
+                tools.print_log(str(d))
                 logmessage += str(d) + " not in the simulation\n"
                 nfound += -1
         if nfound == 0:
-            print("run_reb.initialize_simulation_from_simarchive failed")
-            print(
+            tools.print_log(
+                "run_reb.initialize_simulation_from_simarchive failed"
+            )
+            tools.print_log(
                 "couldn't find any of the small bodies in the simulation from: "
             )
-            print(archivefile)
+            tools.print_log(archivefile)
             if logfile:
                 logmessage += (
                     "couldn't find any of the small bodies in the simulation\n"
@@ -774,7 +792,7 @@ def initialize_simulation_from_simarchive(
         try:
             p = sim.particles[str(des)]
         except:
-            print("failed to find the best-fit in the simulation")
+            tools.print_log("failed to find the best-fit in the simulation")
             logmessage += (
                 "Failed to find best-fit of "
                 + str(des)
@@ -787,16 +805,18 @@ def initialize_simulation_from_simarchive(
             try:
                 p = sim.particles[sbhash]
             except:
-                print("missing clone %d from the simulation" % j)
+                tools.print_log("missing clone %d from the simulation" % j)
                 logmessage += (
                     "missing clone " + str(j) + "from the simulation\n"
                 )
                 n_found += -1
 
     if nfound == 0:
-        print("run_reb.initialize_simulation_from_simarchive failed")
-        print("couldn't find any of the small bodies in the simulation from: ")
-        print(archivefile)
+        tools.print_log("run_reb.initialize_simulation_from_simarchive failed")
+        tools.print_log(
+            "couldn't find any of the small bodies in the simulation from: "
+        )
+        tools.print_log(archivefile)
         if logfile:
             logmessage += (
                 "couldn't find any of the small bodies in the simulation\n"
